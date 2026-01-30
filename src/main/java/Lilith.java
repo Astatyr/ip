@@ -27,7 +27,7 @@ public class Lilith {
 
             else if (input.equalsIgnoreCase("list")) {
                 if(tasklist.isEmpty()){
-                    System.out.println("You have not added any task yet.");
+                    System.out.println("You're free!");
                 }
                 for (int i = 0; i < tasklist.size(); i++){   
                     System.out.println((i+1) + ". " + tasklist.get(i));
@@ -35,18 +35,34 @@ public class Lilith {
             }
 
             else if (input.startsWith("mark ")) {
-                int index = Integer.parseInt(input.substring(5)) - 1;
-                tasklist.get(index).mark();
-                System.out.println("Nicely done! Good job!");
-                System.out.println(tasklist.get(index));
-
+                try {
+                    int index = Integer.parseInt(input.substring(5)) - 1;
+                    tasklist.get(index).mark();
+                    System.out.println("Nicely done! Good job!");
+                    System.out.println(tasklist.get(index));
+                } 
+                catch (IndexOutOfBoundsException e) {
+                    System.out.println("That task does not exist!");
+                }
+                catch (Exception e) {
+                    System.out.println("Hey, write a proper number!");
+                }
             }
 
             else if (input.startsWith("unmark ")) {
-                int index = Integer.parseInt(input.substring(7)) - 1;
-                tasklist.get(index).unmark();
-                System.out.println("Make sure to finish it soon, ok?");
-                System.out.println(tasklist.get(index));
+                try {
+                    int index = Integer.parseInt(input.substring(7)) - 1;
+                    tasklist.get(index).unmark();
+                    System.out.println("Make sure to finish it soon, ok?");
+                    System.out.println(tasklist.get(index));
+                } 
+                catch (IndexOutOfBoundsException e) {
+                    System.out.println("That task does not exist!");
+                }
+                catch (Exception e) {
+                    System.out.println("Hey, write a proper number!");
+                }
+                
             }
 
             else if (input.startsWith("todo ")) {
@@ -55,7 +71,7 @@ public class Lilith {
                 tasklist.add(task);
                 task.setTask(Task.TaskType.ToDos);
                 System.out.println("Got it. I've added this task:\n" + task);
-                System.err.println("Now you have " + tasklist.size() + " task(s) in the list.");
+                System.out.println("Now you have " + tasklist.size() + " task(s) in the list.");
             }
 
             else if (input.startsWith("deadline ")) {
@@ -66,7 +82,7 @@ public class Lilith {
                 tasklist.add(task);
                 task.setTask(Task.TaskType.Deadline);
                 System.out.println("Got it. I've added this task:\n" + task);
-                System.err.println("Now you have " + tasklist.size() + " task(s) in the list.");
+                System.out.println("Now you have " + tasklist.size() + " task(s) in the list.");
                 } 
                 catch (IndexOutOfBoundsException e) {
                     System.out.println("Please write the task properly! 'deadline <task name> /by <end time/date>'");
@@ -92,17 +108,34 @@ public class Lilith {
                 tasklist.add(task);
                 task.setTask(Task.TaskType.Events);
                 System.out.println("Got it. I've added this task:\n" + task);
-                System.err.println("Now you have " + tasklist.size() + " task(s) in the list.");
+                System.out.println("Now you have " + tasklist.size() + " task(s) in the list.");
                 } 
                 catch (IndexOutOfBoundsException e) {
                     System.out.println("Please write the task properly! 'event <task name> /from <start time/date> /to <end time/date>'");
                 }
                 catch (Exception e) {
                 }
-
+            }
+            
+            else if (input.startsWith("delete ")){
+                try {
+                    int index = Integer.parseInt(input.substring(7)) - 1;
+                    Task task = tasklist.get(index);
+                    tasklist.remove(index);
+                    System.out.println("Ta-da! I have removed the task:");
+                    System.out.println(task);
+                    task = null;
+                    System.out.println("Now you have " + tasklist.size() + " task(s) in the list.");
+                }
+                catch (IndexOutOfBoundsException e) {
+                    System.out.println("That task does not exist!");
+                }
+                catch (Exception e) {
+                    System.out.println("Hey, write a proper number!"); 
+                }
             }
 
-            else if (input.startsWith("todo") || input.startsWith("deadline") || input.startsWith("event")){
+            else if (input.startsWith("todo") || input.startsWith("deadline") || input.startsWith("event") || input.startsWith("delete")){
                 System.out.println("Hey! Fill in the task properly! ");
             }
             else{
@@ -156,6 +189,4 @@ class Task{
         }
         return "[" + (status ? "X" : " ") + "] " + taskname;
     }
-}
-
-//ToDo: 'event /from   /to', 
+} 
