@@ -17,7 +17,18 @@ public class Lilith {
                 System.out.println("Bye-bye! I will always be here when you need me!");
                 break;
             }
+
+            else if (input.equalsIgnoreCase("yes")) { 
+                    System.out.println("Okay, but you'll need to convince the oven that it is not a time machine!");
+            }
+            else if (input.equalsIgnoreCase("no")) { 
+                    System.out.println("Lilith is sad...");
+            }
+
             else if (input.equalsIgnoreCase("list")) {
+                if(tasklist.isEmpty()){
+                    System.out.println("You have not added any task yet.");
+                }
                 for (int i = 0; i < tasklist.size(); i++){   
                     System.out.println((i+1) + ". " + tasklist.get(i));
                 }
@@ -48,6 +59,7 @@ public class Lilith {
             }
 
             else if (input.startsWith("deadline ")) {
+                try {
                 input = input.substring(9);
                 String[] parts = input.split("/by");
                 Task task = new Task(parts[0], null, parts[1]);
@@ -55,9 +67,17 @@ public class Lilith {
                 task.setTask(Task.TaskType.Deadline);
                 System.out.println("Got it. I've added this task:\n" + task);
                 System.err.println("Now you have " + tasklist.size() + " task(s) in the list.");
+                } 
+                catch (IndexOutOfBoundsException e) {
+                    System.out.println("Please write the task properly! 'deadline <task name> /by <end time/date>'");
+                }
+                catch (Exception e) {
+                }
+
             }
 
             else if (input.startsWith("event ")) {
+                try {
                 input = input.substring(6);
                 String[] parts = input.split("/from");
                 Task task;
@@ -73,8 +93,18 @@ public class Lilith {
                 task.setTask(Task.TaskType.Events);
                 System.out.println("Got it. I've added this task:\n" + task);
                 System.err.println("Now you have " + tasklist.size() + " task(s) in the list.");
+                } 
+                catch (IndexOutOfBoundsException e) {
+                    System.out.println("Please write the task properly! 'event <task name> /from <start time/date> /to <end time/date>'");
+                }
+                catch (Exception e) {
+                }
+
             }
 
+            else if (input.startsWith("todo") || input.startsWith("deadline") || input.startsWith("event")){
+                System.out.println("Hey! Fill in the task properly! ");
+            }
             else{
                 System.out.println("Lilith cannot find the task type... ");
             }
@@ -122,8 +152,10 @@ class Task{
             case Deadline:
                 return "[D][" + (status ? "X" : " ") + "] " + taskname + "(by: " + enddetail + ")";
             case Events:
-                return "[E][" + (status ? "X" : " ") + "] " + taskname + "(from: " + enddetail + " to: " + startdetail + ")";
+                return "[E][" + (status ? "X" : " ") + "] " + taskname + "(from: " + startdetail + " to: " + enddetail + ")";
         }
         return "[" + (status ? "X" : " ") + "] " + taskname;
     }
 }
+
+//ToDo: 'event /from   /to', 
