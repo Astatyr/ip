@@ -1,7 +1,86 @@
-Hello from
- ____        _        
-|  _ \ _   _| | _____ 
-| | | | | | | |/ / _ \
-| |_| | |_| |   <  __/
-|____/ \__,_|_|\_\___|
-
+Hello, I'm Lilith!
+Would you like a strawberry cake?
+--------------------------------------------------------------
+Okay, but you'll need to convince the oven that it is not a time machine!
+--------------------------------------------------------------
+Lilith is sad...
+--------------------------------------------------------------
+Hey! Fill in the task properly! 
+--------------------------------------------------------------
+That task does not exist!
+--------------------------------------------------------------
+Lilith cannot find the task type... 
+--------------------------------------------------------------
+You're free!
+--------------------------------------------------------------
+Hey! Fill in the task properly! 
+--------------------------------------------------------------
+Please write the task properly! 'event <task name> /from <start time/date> /to <end time/date>'
+--------------------------------------------------------------
+Please write the task properly! 'deadline <task name> /by <end time/date>'
+--------------------------------------------------------------
+Got it. I've added this task:
+[T][ ] xyz
+Now you have 1 task(s) in the list.
+--------------------------------------------------------------
+Got it. I've added this task:
+[D][ ] abc (by:  12 Jan)
+Now you have 2 task(s) in the list.
+--------------------------------------------------------------
+Got it. I've added this task:
+[E][ ] def (from:  12 jan  to:  14 jan)
+Now you have 3 task(s) in the list.
+--------------------------------------------------------------
+Got it. I've added this task:
+[E][ ] ghi (from:  12pm to:  2pm )
+Now you have 4 task(s) in the list.
+--------------------------------------------------------------
+1. [T][ ] xyz
+2. [D][ ] abc (by:  12 Jan)
+3. [E][ ] def (from:  12 jan  to:  14 jan)
+4. [E][ ] ghi (from:  12pm to:  2pm )
+--------------------------------------------------------------
+Nicely done! Good job!
+[T][X] xyz
+--------------------------------------------------------------
+Nicely done! Good job!
+[D][X] abc (by:  12 Jan)
+--------------------------------------------------------------
+Nicely done! Good job!
+[E][X] def (from:  12 jan  to:  14 jan)
+--------------------------------------------------------------
+That task does not exist!
+--------------------------------------------------------------
+Make sure to finish it soon, ok?
+[T][ ] xyz
+--------------------------------------------------------------
+1. [T][ ] xyz
+2. [D][X] abc (by:  12 Jan)
+3. [E][X] def (from:  12 jan  to:  14 jan)
+4. [E][ ] ghi (from:  12pm to:  2pm )
+--------------------------------------------------------------
+Make sure to finish it soon, ok?
+[D][ ] abc (by:  12 Jan)
+--------------------------------------------------------------
+Make sure to finish it soon, ok?
+[E][ ] def (from:  12 jan  to:  14 jan)
+--------------------------------------------------------------
+That task does not exist!
+--------------------------------------------------------------
+1. [T][ ] xyz
+2. [D][ ] abc (by:  12 Jan)
+3. [E][ ] def (from:  12 jan  to:  14 jan)
+4. [E][ ] ghi (from:  12pm to:  2pm )
+--------------------------------------------------------------
+Ta-da! I have removed the task:
+[T][ ] xyz
+Now you have 3 task(s) in the list.
+--------------------------------------------------------------
+Ta-da! I have removed the task:
+[E][ ] ghi (from:  12pm to:  2pm )
+Now you have 2 task(s) in the list.
+--------------------------------------------------------------
+1. [D][ ] abc (by:  12 Jan)
+2. [E][ ] def (from:  12 jan  to:  14 jan)
+--------------------------------------------------------------
+Bye-bye! I will always be here when you need me!
