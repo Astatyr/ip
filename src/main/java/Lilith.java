@@ -38,10 +38,45 @@ public class Lilith {
                 System.out.println(tasklist.get(index));
             }
 
+            else if (input.startsWith("todo ")) {
+                input = input.substring(5);
+                Task task = new Task(input, null, null);
+                tasklist.add(task);
+                task.setTask(Task.TaskType.ToDos);
+                System.out.println("Got it. I've added this task:\n" + task);
+                System.err.println("Now you have " + tasklist.size() + " task(s) in the list.");
+            }
+
+            else if (input.startsWith("deadline ")) {
+                input = input.substring(9);
+                String[] parts = input.split("/by");
+                Task task = new Task(parts[0], null, parts[1]);
+                tasklist.add(task);
+                task.setTask(Task.TaskType.Deadline);
+                System.out.println("Got it. I've added this task:\n" + task);
+                System.err.println("Now you have " + tasklist.size() + " task(s) in the list.");
+            }
+
+            else if (input.startsWith("event ")) {
+                input = input.substring(6);
+                String[] parts = input.split("/from");
+                Task task;
+                if (parts[0].contains("/to")){
+                    String[] parts_sub = parts[0].split("/to");
+                    task = new Task(parts_sub[0], parts[1], parts_sub[1]);
+                }
+                else{
+                    String[] parts_sub = parts[1].split("/to");
+                    task = new Task(parts[0], parts_sub[0], parts_sub[1]);
+                }
+                tasklist.add(task);
+                task.setTask(Task.TaskType.Events);
+                System.out.println("Got it. I've added this task:\n" + task);
+                System.err.println("Now you have " + tasklist.size() + " task(s) in the list.");
+            }
+
             else{
-                Task taskname = new Task(input);
-                tasklist.add(taskname);
-                System.out.println("added:" + input);
+                System.out.println("Lilith cannot find the task type... ");
             }
         }
         scanner.close();
@@ -49,12 +84,26 @@ public class Lilith {
 }
 
 class Task{
+    enum TaskType{
+        ToDos, Deadline, Events
+    }
+
     String taskname;
     boolean status;
+    TaskType tasktype;
+    String startdetail;
+    String enddetail;
 
-    Task(String taskname){
+    Task(String taskname, String startdetail, String enddetail){
         this.taskname = taskname;
         this.status = false;
+        this.tasktype = TaskType.ToDos;
+        this.startdetail = startdetail;
+        this.enddetail = enddetail;
+    }
+
+    public void setTask(TaskType input){
+        tasktype = input;
     }
 
     void mark(){
@@ -64,8 +113,17 @@ class Task{
     void unmark(){
         status = false;
     }
+
     @Override
     public String toString() {
+        switch (tasktype){
+            case ToDos:
+                return "[T][" + (status ? "X" : " ") + "] " + taskname;
+            case Deadline:
+                return "[D][" + (status ? "X" : " ") + "] " + taskname + "(by: " + enddetail + ")";
+            case Events:
+                return "[E][" + (status ? "X" : " ") + "] " + taskname + "(from: " + enddetail + " to: " + startdetail + ")";
+        }
         return "[" + (status ? "X" : " ") + "] " + taskname;
     }
 }
