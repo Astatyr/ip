@@ -1,21 +1,74 @@
-@ECHO OFF
+@echo off
+chcp 65001 > nul
 
-REM create bin directory if it doesn't exist
-if not exist ..\bin mkdir ..\bin
+echo ===============================================
+echo                Duke Test Runner                
+echo ===============================================
+echo.
 
-REM delete output from previous run
-del ACTUAL.TXT
+echo [1/4] Checking Java version...
+java -version
 
-REM compile the code into the bin folder
-javac  -cp ..\src\main\java -Xlint:none -d ..\bin ..\src\main\java\Lilith.java
-IF ERRORLEVEL 1 (
-    echo ********** BUILD FAILURE **********
+REM check if using Java 21
+for /f "tokens=3" %%g in ('java -version 2^>^&1 ^| findstr /i "version"') do (
+    set JAVAVER=%%g
+)
+
+set JAVAVER=%JAVAVER:"=%
+for /f "delims=. tokens=1" %%v in ("%JAVAVER%") do (
+    set MAJORVER=%%v
+)
+
+if NOT "%MAJORVER%"=="21" (
+    echo.
+    echo =============== ERROR ===============
+    echo Please use Java 21 ^(current: %MAJORVER%^)
+    echo ===================================
     exit /b 1
 )
-REM no error here, errorlevel == 0
 
-REM run the program, feed commands from input.txt file and redirect the output to the ACTUAL.TXT
-java -classpath ..\bin Lilith < input.txt > ACTUAL.TXT
+echo [√] Java version check passed
+echo.
 
-REM compare the output to the expected output
-FC ACTUAL.TXT EXPECTED.TXT
+echo [2/4] Setting up test environment...
+if not exist ..\bin (
+    mkdir ..\bin
+    echo Created bin directory
+)
+
+if exist ACTUAL.TXT (
+    del ACTUAL.TXT
+    echo Cleaned up previous test outputs
+)
+
+echo.
+echo [3/4] Compiling source files...
+javac -cp ..\src\main\java -Xlint:none -d ..\bin ..\src\main\java\*.java
+IF ERRORLEVEL 1 (
+    echo.
+    echo =============== ERROR ===============
+    echo         BUILD FAILURE              
+    echo ===================================
+    exit /b 1
+)
+
+echo [√] Compilation successful
+echo.
+
+echo [4/4] Running tests...
+java -classpath ..\bin Duke < input.txt > ACTUAL.TXT
+
+FC ACTUAL.TXT EXPECTED.TXT > nul
+if ERRORLEVEL 1 (
+    echo.
+    echo =============== ERROR ===============
+    echo           Tests FAILED             
+    echo ===================================
+    exit /b 1
+) else (
+    echo.
+    echo ============= SUCCESS ==============
+    echo         All tests passed           
+    echo ===================================
+    exit /b 0
+)
