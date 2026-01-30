@@ -1,0 +1,28 @@
+yes
+no
+todo
+delete 1
+blablA
+list
+event
+event /from
+deadline /by
+todo xyz
+deadline abc /by 12 Jan
+event def /from 12 jan /to 14 jan
+event ghi /to 2pm /from 12pm
+list
+mark 1
+mark 2
+mark 3
+mark 24
+unmark 1
+list
+unmark 2
+unmark 3
+unmark 24
+list
+delete 1
+delete 3
+list
+bye
