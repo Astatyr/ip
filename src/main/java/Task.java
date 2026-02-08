@@ -1,23 +1,38 @@
-public class Task{
-    enum TaskType{
-        ToDos, Deadline, Events
-    }
+import java.time.LocalDateTime;
+
+public class Task {
+    enum TaskType { ToDos, Deadline, Events }
 
     String taskname;
     boolean status;
     TaskType tasktype;
+
+    // Original string fields (optional, could be removed)
     String startdetail;
     String enddetail;
 
-    Task(String taskname, String startdetail, String enddetail){
+    // Parsed date fields for standardized output
+    LocalDateTime startDateTime;
+    LocalDateTime endDateTime;
+
+    Task(String taskname, String startdetail, String enddetail) {
         this.taskname = taskname;
         this.status = false;
         this.tasktype = TaskType.ToDos;
         this.startdetail = startdetail;
         this.enddetail = enddetail;
+
+        try {
+            if (startdetail != null && !startdetail.isEmpty()) {
+                this.startDateTime = Parser.parseDateTime(startdetail);
+            }
+            if (enddetail != null && !enddetail.isEmpty()) {
+                this.endDateTime = Parser.parseDateTime(enddetail);
+            }
+        } catch (Exception ignored) {}
     }
 
-    public void setTask(TaskType input){
+    public void setTask(TaskType input) {
         tasktype = input;
     }
 
@@ -30,11 +45,20 @@ public class Task{
     }
 
     public String toFileString() {
-        String typeLetter = switch (tasktype) {
-            case ToDos -> "T";
-            case Deadline -> "D";
-            case Events -> "E";
-        };
+        String typeLetter;
+        switch (tasktype) {
+            case ToDos:
+                typeLetter = "T";
+                break;
+            case Deadline:
+                typeLetter = "D";
+                break;
+            case Events:
+                typeLetter = "E";
+                break;
+            default:
+                typeLetter = "?";
+        }
 
         String done = status ? "1" : "0";
 
@@ -64,28 +88,22 @@ public class Task{
         Task task;
 
         switch (type) {
-            case "T" -> {
+            case "T":
                 task = new Task(name, null, null);
                 task.setTask(TaskType.ToDos);
-            }
-
-            case "D" -> {
-                if (parts.length < 4) {
-                    throw new IllegalArgumentException("Deadline missing detail");
-                }
+                break;
+            case "D":
+                if (parts.length < 4) throw new IllegalArgumentException("Deadline missing detail");
                 task = new Task(name, null, parts[3]);
                 task.setTask(TaskType.Deadline);
-            }
-
-            case "E" -> {
-                if (parts.length < 5) {
-                    throw new IllegalArgumentException("Event missing details");
-                }
+                break;
+            case "E":
+                if (parts.length < 5) throw new IllegalArgumentException("Event missing details");
                 task = new Task(name, parts[3], parts[4]);
                 task.setTask(TaskType.Events);
-            }
-
-            default -> throw new IllegalArgumentException("Unknown task type");
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown task type");
         }
 
         if (done) {
@@ -98,17 +116,19 @@ public class Task{
 
     @Override
     public String toString() {
-        switch (tasktype){
-            case ToDos -> {
+        switch (tasktype) {
+            case ToDos:
                 return "[T][" + (status ? "X" : " ") + "] " + taskname;
-            }
-            case Deadline -> {
-                return "[D][" + (status ? "X" : " ") + "] " + taskname + "(by: " + enddetail + ")";
-            }
-            case Events -> {
-                return "[E][" + (status ? "X" : " ") + "] " + taskname + "(from: " + startdetail + " to: " + enddetail + ")";
-            }
+            case Deadline:
+                String formattedEnd = endDateTime != null ? Parser.formatDateTime(endDateTime) : enddetail;
+                return "[D][" + (status ? "X" : " ") + "] " + taskname + " (by: " + formattedEnd + ")";
+            case Events:
+                String formattedStart = startDateTime != null ? Parser.formatDateTime(startDateTime) : startdetail;
+                String formattedEndEvent = endDateTime != null ? Parser.formatDateTime(endDateTime) : enddetail;
+                return "[E][" + (status ? "X" : " ") + "] " + taskname + " (from: " + formattedStart + " to: " + formattedEndEvent + ")";
+            default:
+                return "[" + (status ? "X" : " ") + "] " + taskname;
         }
-        return "[" + (status ? "X" : " ") + "] " + taskname;
     }
-} 
+}
+

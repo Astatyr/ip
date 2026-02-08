@@ -14,35 +14,25 @@ public class Storage {
         this.filePath = Paths.get(path);
     }
 
-    /**
-     * Ensures that the folder and file exist.
-     * Creates them if missing.
-     */
+    //Creates file/dir if missing.
     private void ensureFileExists() throws IOException {
 
-        // Create ./data folder if missing
         if (!Files.exists(filePath.getParent())) {
             Files.createDirectories(filePath.getParent());
         }
 
-        // Create file if missing
         if (!Files.exists(filePath)) {
             Files.createFile(filePath);
         }
     }
 
-    /**
-     * Loads tasks from the file.
-     * Skips corrupted lines safely.
-     */
+    //Loads tasks from the file & skip corrupted lines safely.
     public ArrayList<Task> loadTasks() {
 
         ArrayList<Task> tasks = new ArrayList<>();
 
         try {
             ensureFileExists();
-
-            // Read all lines at once
             List<String> lines = Files.readAllLines(filePath, StandardCharsets.UTF_8);
 
             for (String line : lines) {
@@ -66,10 +56,7 @@ public class Storage {
         return tasks;
     }
 
-    /**
-     * Saves tasks into the file using Files.write().
-     * Overwrites the file each time.
-     */
+    //Overwrites the file each time.
     public void saveTasks(ArrayList<Task> tasks) {
 
         try {
@@ -77,12 +64,10 @@ public class Storage {
 
             List<String> lines = new ArrayList<>();
 
-            // Convert each task into a file line
             for (Task task : tasks) {
                 lines.add(task.toFileString());
             }
 
-            // Write all lines into file (overwrite)
             Files.write(filePath, lines, StandardCharsets.UTF_8);
 
         } catch (IOException e) {
