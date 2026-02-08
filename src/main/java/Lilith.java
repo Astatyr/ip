@@ -13,11 +13,13 @@ public class Lilith {
         Scanner scanner = new Scanner(System.in);
         //ArrayList<Task> tasklist = new ArrayList<>();
 
-        Storage storage = new Storage("./data/lilith.txt");
+        Storage storage = new Storage("./LilithData/lilith.txt");
         ArrayList<Task> tasklist = storage.loadTasks();
         if (!tasklist.isEmpty()){
             System.out.println("Loaded " + tasklist.size() + " tasks!");
         }
+        System.out.println("Current working directory: " + System.getProperty("user.dir"));
+
 
         while (true) {
             System.out.println("--------------------------------------------------------------");
