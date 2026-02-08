@@ -1,17 +1,16 @@
 import java.time.LocalDateTime;
 
+/**
+ *Task class, to represent tasks.
+ */
 public class Task {
     enum TaskType { ToDos, Deadline, Events }
 
     String taskname;
     boolean status;
     TaskType tasktype;
-
-    // Original string fields (optional, could be removed)
     String startdetail;
     String enddetail;
-
-    // Parsed date fields for standardized output
     LocalDateTime startDateTime;
     LocalDateTime endDateTime;
 
@@ -32,18 +31,22 @@ public class Task {
         } catch (Exception ignored) {}
     }
 
+    //Sets task type
     public void setTask(TaskType input) {
         tasktype = input;
     }
 
+    //Mark if a task is done.
     void mark(){
         status = true;
     }
 
+    //Unmark if a task is not done.
     void unmark(){
         status = false;
     }
 
+    //Format output for txt file.
     public String toFileString() {
         String typeLetter;
         switch (tasktype) {
@@ -70,11 +73,12 @@ public class Task {
             return typeLetter + " | " + done + " | " + taskname + " | " + enddetail;
         }
 
-        // Events
+        //else Events
         return typeLetter + " | " + done + " | " + taskname
                 + " | " + startdetail + " | " + enddetail;
     }
 
+    //Parse txt file into tasks.
     public static Task fromFileString(String line) {
         String[] parts = line.split("\\s*\\|\\s*");
 
@@ -113,7 +117,7 @@ public class Task {
         return task;
     }
 
-
+    //Format how tasks are displayed for user.
     @Override
     public String toString() {
         switch (tasktype) {

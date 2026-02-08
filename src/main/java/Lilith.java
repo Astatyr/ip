@@ -1,8 +1,11 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ *Lilith class, main application class.
+ */
 public class Lilith {
-
+    //Initializes Lilith.
     public static void main(String[] args) {
         System.out.println("Hello, I'm Lilith!");
         System.out.println("Would you like a strawberry cake?");
@@ -43,6 +46,7 @@ public class Lilith {
         scanner.close();
     }
 
+    //User command handling.
     private static void handleCommand(String input, ArrayList<Task> tasklist, Storage storage) {
         try {
             if (input.toLowerCase().startsWith("todo ")) {
