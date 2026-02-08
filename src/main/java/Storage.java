@@ -43,12 +43,14 @@ public class Storage {
                 try {
                     Task task = Task.fromFileString(line);
                     tasks.add(task);
-                } catch (Exception e) {
+                } 
+                catch (Exception e) {
                     System.out.println("Skipping corrupted line: " + line);
                 }
             }
 
-        } catch (IOException e) {
+        } 
+        catch (IOException e) {
             System.out.println("Error loading tasks: " + e.getMessage());
         }
 
@@ -60,7 +62,6 @@ public class Storage {
 
         try {
             ensureFileExists();
-
             List<String> lines = new ArrayList<>();
 
             for (Task task : tasks) {
@@ -69,7 +70,8 @@ public class Storage {
 
             Files.write(filePath, lines, StandardCharsets.UTF_8);
 
-        } catch (IOException e) {
+        } 
+        catch (IOException e) {
             System.out.println("Error saving tasks: " + e.getMessage());
         }
     }
