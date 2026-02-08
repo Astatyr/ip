@@ -5,18 +5,19 @@ import java.util.Scanner;
 
 public class Lilith {
     private static final String CHEER_PLAYLIST = "https://www.youtube.com/watch?v=FAmojODvK64&list=RDFAmojODvK64&start_radio=1";
+    private static final String DATA_PATH = "./LilithData/lilith.txt";
     public static void main(String[] args) {
         System.out.println("Hello, I'm Lilith!");
         System.out.println("Would you like a strawberry cake?");
-
+        
         Scanner scanner = new Scanner(System.in);
-        Storage storage = new Storage("./LilithData/lilith.txt");
+        Storage storage = new Storage(DATA_PATH);
         ArrayList<Task> tasklist = storage.loadTasks();
 
         if (!tasklist.isEmpty()) {
             System.out.println("Loaded " + tasklist.size() + " tasks!");
         }
-        System.out.println("For Debugging - Current working directory: " + System.getProperty("user.dir"));
+        //System.out.println("For Debugging - Current working directory: " + System.getProperty("user.dir"));
 
         while (true) {
             System.out.println("--------------------------------------------------------------");
@@ -36,9 +37,14 @@ public class Lilith {
                 System.out.println("Lilith is sad...");
             } 
             else if (input.equalsIgnoreCase("list")) {
-                if (tasklist.isEmpty()) System.out.println("You're free!");
-                else for (int i = 0; i < tasklist.size(); i++)
+                if (tasklist.isEmpty()) {
+                    System.out.println("You're free!");
+                }
+                else {
+                    for (int i = 0; i < tasklist.size(); i++){
                     System.out.println((i + 1) + ". " + tasklist.get(i));
+                    }
+                }
             } 
             else {
                 handleCommand(input, tasklist, storage);
@@ -70,14 +76,15 @@ public class Lilith {
 
     private static void handleCommand(String input, ArrayList<Task> tasklist, Storage storage) {
         try {
-            if (input.toLowerCase().startsWith("todo ")) {
+            input = input.toLowerCase().trim();
+            if (input.startsWith("todo ")) {
                 Task task = new Task(input.substring(5), null, null);
                 task.setTask(Task.TaskType.ToDos);
                 tasklist.add(task);
                 storage.saveTasks(tasklist);
                 System.out.println("Got it. I've added this task:\n" + task);
             } 
-            else if (input.toLowerCase().startsWith("deadline ")) {
+            else if (input.startsWith("deadline ")) {
                 String[] parts = Parser.parseDeadlineInput(input);
                 Task task = new Task(parts[0], null, parts[1]); 
                 task.setTask(Task.TaskType.Deadline);
@@ -85,7 +92,7 @@ public class Lilith {
                 storage.saveTasks(tasklist);
                 System.out.println("Got it. I've added this task:\n" + task);
             } 
-            else if (input.toLowerCase().startsWith("event ")) {
+            else if (input.startsWith("event ")) {
                 String[] parts = Parser.parseEventInput(input);
                 Task task = new Task(parts[0], parts[1], parts[2]); 
                 task.setTask(Task.TaskType.Events);
@@ -93,25 +100,25 @@ public class Lilith {
                 storage.saveTasks(tasklist);
                 System.out.println("Got it. I've added this task:\n" + task);
             } 
-            else if (input.toLowerCase().startsWith("mark ")) {
+            else if (input.startsWith("mark ")) {
                 int index = Integer.parseInt(input.substring(5)) - 1;
                 tasklist.get(index).mark();
                 storage.saveTasks(tasklist);
                 System.out.println("Nicely done! Good job!\n" + tasklist.get(index));
             } 
-            else if (input.toLowerCase().startsWith("unmark ")) {
+            else if (input.startsWith("unmark ")) {
                 int index = Integer.parseInt(input.substring(7)) - 1;
                 tasklist.get(index).unmark();
                 storage.saveTasks(tasklist);
                 System.out.println("Make sure to finish it soon, ok?\n" + tasklist.get(index));
             } 
-            else if (input.toLowerCase().startsWith("delete ")) {
+            else if (input.startsWith("delete ")) {
                 int index = Integer.parseInt(input.substring(7)) - 1;
                 Task removed = tasklist.remove(index);
                 storage.saveTasks(tasklist);
                 System.out.println("Ta-da! I have removed the task:\n" + removed);
             } 
-            else if (input.equalsIgnoreCase("/emptyall")) {
+            else if (input.equals("/emptyall")) {
                 tasklist.clear();
                 storage.saveTasks(tasklist);
                 System.out.println("All tasks have been cleared!");
@@ -126,7 +133,3 @@ public class Lilith {
         }
     }
 }
-
-
-
-//test branching

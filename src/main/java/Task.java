@@ -29,7 +29,8 @@ public class Task {
             if (enddetail != null && !enddetail.isEmpty()) {
                 this.endDateTime = Parser.parseDateTime(enddetail);
             }
-        } catch (Exception ignored) {}
+        } 
+        catch (Exception ignored) {}
     }
 
     public void setTask(TaskType input) {

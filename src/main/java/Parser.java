@@ -39,7 +39,8 @@ public class Parser {
             try {
                 if (f.toString().contains("H")) {
                     return LocalDateTime.parse(trimmed, f);
-                } else {
+                } 
+                else {
                     //default time to 00:00 if not given
                     LocalDate date = LocalDate.parse(trimmed, f);
                     return date.atStartOfDay();
@@ -55,8 +56,10 @@ public class Parser {
 
     public static String[] parseDeadlineInput(String input) throws IllegalArgumentException {
         String[] parts = input.split("/by");
-        if (parts.length != 2)
+        if (parts.length != 2){
             throw new IllegalArgumentException("Use: deadline <task> /by <date> [HHmm]");
+        }
+
         //Validating date for deadlines
         parseDateTime(parts[1].trim());
         return new String[]{parts[0].trim(), parts[1].trim()};
@@ -64,13 +67,15 @@ public class Parser {
 
     public static String[] parseEventInput(String input) throws IllegalArgumentException {
         String[] parts = input.split("/from");
-        if (parts.length != 2)
+        if (parts.length != 2){
             throw new IllegalArgumentException("Use: event <task> /from <date> [HHmm] /to <date> [HHmm]");
+        }
 
         String name = parts[0].trim();
         String[] fromTo = parts[1].split("/to");
-        if (fromTo.length != 2)
+        if (fromTo.length != 2){
             throw new IllegalArgumentException("Use: event <task> /from <date> [HHmm] /to <date> [HHmm]");
+        }
 
         //Validating date for events
         parseDateTime(fromTo[0].trim());
