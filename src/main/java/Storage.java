@@ -6,6 +6,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *Storage class, to handle file operations.
+ */
 public class Storage {
     private final Path filePath;
 

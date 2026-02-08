@@ -3,9 +3,13 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ *Lilith class, main application class.
+ */
 public class Lilith {
     private static final String CHEER_PLAYLIST = "https://www.youtube.com/watch?v=FAmojODvK64&list=RDFAmojODvK64&start_radio=1";
     private static final String DATA_PATH = "./LilithData/lilith.txt";
+    //Initializes Lilith.
     public static void main(String[] args) {
         System.out.println("Hello, I'm Lilith!");
         System.out.println("Would you like a strawberry cake?");
@@ -74,6 +78,7 @@ public class Lilith {
         }
     }
 
+    //User command handling.
     private static void handleCommand(String input, ArrayList<Task> tasklist, Storage storage) {
         try {
             input = input.toLowerCase().trim();
