@@ -1,8 +1,10 @@
+import java.awt.Desktop;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Lilith {
-
+    private static final String CHEER_PLAYLIST = "https://www.youtube.com/watch?v=FAmojODvK64&list=RDFAmojODvK64&start_radio=1";
     public static void main(String[] args) {
         System.out.println("Hello, I'm Lilith!");
         System.out.println("Would you like a strawberry cake?");
@@ -24,6 +26,9 @@ public class Lilith {
                 System.out.println("Bye-bye! I will always be here when you need me!");
                 break;
             } 
+            else if (input.equalsIgnoreCase("cheer")) {
+                openCheerPlaylist();
+            } 
             else if (input.equalsIgnoreCase("yes")) {
                 System.out.println("Okay, but you'll need to convince the oven that it is not a time machine!");
             } 
@@ -41,6 +46,26 @@ public class Lilith {
         }
 
         scanner.close();
+    }
+
+    private static void openCheerPlaylist() {
+        if (!CHEER_PLAYLIST.startsWith("https://www.youtube.com/")) {
+            System.out.println("Invalid URL. Cannot open.");
+            return;
+        }
+
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().browse(new URI(CHEER_PLAYLIST));
+                System.out.println("Cheering operation, GO!");
+            } 
+            catch (Exception e) {
+                System.out.println("Failed to open site: " + e.getMessage());
+            }
+        } 
+        else {
+            System.out.println("Desktop API not supported on this system.");
+        }
     }
 
     private static void handleCommand(String input, ArrayList<Task> tasklist, Storage storage) {
