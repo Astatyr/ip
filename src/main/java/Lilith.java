@@ -35,12 +35,41 @@ public class Lilith {
                 else for (int i = 0; i < tasklist.size(); i++)
                     System.out.println((i + 1) + ". " + tasklist.get(i));
             } 
+            else if (input.toLowerCase().startsWith("find ")) {
+                String keyword = input.substring(5).trim();
+                if (keyword.isEmpty()) {
+                    System.out.println("Please provide a keyword to search for!");
+                } else {
+                    findTasks(keyword, tasklist);
+                }
+            }
             else {
                 handleCommand(input, tasklist, storage);
             }
         }
 
         scanner.close();
+    }
+    /**
+     * Searches tasks containing the keyword and prints them.
+     */
+    private static void findTasks(String keyword, ArrayList<Task> tasklist) {
+        System.out.println("____________________________________________________________");
+        System.out.println("Here are the matching tasks in your list:");
+
+        int count = 0;
+        for (int i = 0; i < tasklist.size(); i++) {
+            Task task = tasklist.get(i);
+            if (task.taskname.toLowerCase().contains(keyword.toLowerCase())) {
+                count++;
+                System.out.println((count) + ". " + task);
+            }
+        }
+
+        if (count == 0) {
+            System.out.println("No matching tasks found for \"" + keyword + "\".");
+        }
+        System.out.println("____________________________________________________________");
     }
 
     private static void handleCommand(String input, ArrayList<Task> tasklist, Storage storage) {
@@ -53,7 +82,7 @@ public class Lilith {
                 System.out.println("Got it. I've added this task:\n" + task);
             } 
             else if (input.toLowerCase().startsWith("deadline ")) {
-                String[] parts = Parser.parseDeadlineInput(input);
+                String[] parts = Parser.parseDeadlineInput(input.substring(9));
                 Task task = new Task(parts[0], null, parts[1]); 
                 task.setTask(Task.TaskType.Deadline);
                 tasklist.add(task);
@@ -61,7 +90,7 @@ public class Lilith {
                 System.out.println("Got it. I've added this task:\n" + task);
             } 
             else if (input.toLowerCase().startsWith("event ")) {
-                String[] parts = Parser.parseEventInput(input);
+                String[] parts = Parser.parseEventInput(input.substring(6));
                 Task task = new Task(parts[0], parts[1], parts[2]); 
                 task.setTask(Task.TaskType.Events);
                 tasklist.add(task);
