@@ -1,3 +1,9 @@
+package lilith;
+
+import lilith.task.Task;
+import lilith.storage.Storage;
+import lilith.parser.Parser;
+
 import java.awt.Desktop;
 import java.net.URI;
 import java.util.ArrayList;

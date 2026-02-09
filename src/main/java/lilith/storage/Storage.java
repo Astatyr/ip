@@ -1,3 +1,7 @@
+package lilith.storage;
+
+import lilith.task.Task;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

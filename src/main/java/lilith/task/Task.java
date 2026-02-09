@@ -1,12 +1,17 @@
+package lilith.task;
+
+import lilith.parser.Parser;
 import java.time.LocalDateTime;
 
 /**
  *Task class, to represent tasks.
  */
 public class Task {
-    enum TaskType { ToDos, Deadline, Events }
+    public enum TaskType { 
+        ToDos, Deadline, Events 
+    }
 
-    String taskname;
+    public String taskname;
     boolean status;
     TaskType tasktype;
     String startdetail;
@@ -14,7 +19,7 @@ public class Task {
     LocalDateTime startDateTime;
     LocalDateTime endDateTime;
 
-    Task(String taskname, String startdetail, String enddetail) {
+    public Task(String taskname, String startdetail, String enddetail) {
         this.taskname = taskname;
         this.status = false;
         this.tasktype = TaskType.ToDos;
@@ -38,12 +43,12 @@ public class Task {
     }
 
     //Mark if a task is done.
-    void mark(){
+    public void mark(){
         status = true;
     }
 
     //Unmark if a task is not done.
-    void unmark(){
+    public void unmark(){
         status = false;
     }
 
