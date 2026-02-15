@@ -38,14 +38,11 @@ public class Storage {
      *Loads tasks from the file & skip corrupted lines safely.
     */
     public ArrayList<Task> loadTasks() {
-
         ArrayList<Task> tasks = new ArrayList<>();
         try {
             ensureFileExists();
             List<String> lines = Files.readAllLines(filePath, StandardCharsets.UTF_8);
-
             for (String line : lines) {
-
                 if (line.trim().isEmpty()) {
                     continue;
                 }
