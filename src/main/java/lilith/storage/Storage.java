@@ -20,7 +20,9 @@ public class Storage {
         this.filePath = Paths.get(path);
     }
 
-    //Creates file/dir if missing.
+    /**
+     *Creates file/dir if missing.
+    */
     private void ensureFileExists() throws IOException {
 
         if (!Files.exists(filePath.getParent())) {
@@ -32,11 +34,12 @@ public class Storage {
         }
     }
 
-    //Loads tasks from the file & skip corrupted lines safely.
+    /**
+     *Loads tasks from the file & skip corrupted lines safely.
+    */
     public ArrayList<Task> loadTasks() {
 
         ArrayList<Task> tasks = new ArrayList<>();
-
         try {
             ensureFileExists();
             List<String> lines = Files.readAllLines(filePath, StandardCharsets.UTF_8);
@@ -46,7 +49,6 @@ public class Storage {
                 if (line.trim().isEmpty()) {
                     continue;
                 }
-
                 try {
                     Task task = Task.fromFileString(line);
                     tasks.add(task);
@@ -55,16 +57,16 @@ public class Storage {
                     System.out.println("Skipping corrupted line: " + line);
                 }
             }
-
         } 
         catch (IOException e) {
             System.out.println("Error loading tasks: " + e.getMessage());
         }
-
         return tasks;
     }
 
-    //Overwrites the file each time.
+    /**
+    *Overwrites the file each time a task is added or removed.
+    */
     public void saveTasks(ArrayList<Task> tasks) {
 
         try {

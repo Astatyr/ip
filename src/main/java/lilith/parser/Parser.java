@@ -9,7 +9,9 @@ import java.time.format.DateTimeParseException;
  *Parser class, for date and time parsing and formatting.
  */
 public class Parser {
-    //Accepted input date formats
+    /**
+     *Accepted input date formats (what the user can input)
+    */
     private static final DateTimeFormatter[] FORMATS = new DateTimeFormatter[]{
             DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm"),
             DateTimeFormatter.ofPattern("yyyy/MM/dd HHmm"),
@@ -37,10 +39,14 @@ public class Parser {
             DateTimeFormatter.ofPattern("yyyy/M/dd")
     };
 
-    //Accepted output date formats (what the user sees)
+    /**
+     *Accepted output date formats (what the user sees)
+    */
     public static final DateTimeFormatter OUTPUT_FORMAT = DateTimeFormatter.ofPattern("MMM dd yyyy HH:mm");
 
-    //Parses date/time from string input.
+    /**
+     *Parses date/time from string input. Default time to 00:00 if not given
+    */
     public static LocalDateTime parseDateTime(String dateTimeStr) throws DateTimeParseException {
         String trimmed = dateTimeStr.trim();
         for (DateTimeFormatter f : FORMATS) {
@@ -49,7 +55,6 @@ public class Parser {
                     return LocalDateTime.parse(trimmed, f);
                 } 
                 else {
-                    //default time to 00:00 if not given
                     LocalDate date = LocalDate.parse(trimmed, f);
                     return date.atStartOfDay();
                 }
@@ -58,12 +63,16 @@ public class Parser {
         throw new DateTimeParseException("Date does not match any accepted format", trimmed, 0);
     }
 
-    //Formats date/time for output.
+    /**
+     *Formats date/time for output.
+    */
     public static String formatDateTime(LocalDateTime dateTime) {
         return dateTime.format(OUTPUT_FORMAT);
     }
 
-    //Splitting the Deadline input & parsing it
+    /**
+     *Splitting the Deadline input & parsing it
+    */
     public static String[] parseDeadlineInput(String input) throws IllegalArgumentException {
         String[] parts = input.split("/by");
         if (parts.length != 2){
@@ -75,19 +84,20 @@ public class Parser {
         return new String[]{parts[0].trim(), parts[1].trim()};
     }
 
-    //Splitting the Event input & parsing it
+    /**
+     *Splitting the Event input & parsing it
+    */
     public static String[] parseEventInput(String input) throws IllegalArgumentException {
         String[] parts = input.split("/from");
         if (parts.length != 2){
             throw new IllegalArgumentException("Use: event <task> /from <date> [HHmm] /to <date> [HHmm]");
         }
-
         String name = parts[0].trim();
         String[] fromTo = parts[1].split("/to");
         if (fromTo.length != 2){
             throw new IllegalArgumentException("Use: event <task> /from <date> [HHmm] /to <date> [HHmm]");
         }
-
+        
         //Validating date for events
         parseDateTime(fromTo[0].trim());
         parseDateTime(fromTo[1].trim());

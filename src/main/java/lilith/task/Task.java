@@ -37,22 +37,30 @@ public class Task {
         catch (Exception ignored) {}
     }
 
-    //Sets task type
+    /**
+     * Sets task type
+     */
     public void setTask(TaskType input) {
         tasktype = input;
     }
 
-    //Mark if a task is done.
+    /**
+     * Mark if a task is done.
+     */
     public void mark(){
         status = true;
     }
 
-    //Unmark if a task is not done.
+    /**
+     * Unmark if a task is not done.
+     */
     public void unmark(){
         status = false;
     }
 
-    //Format output for txt file.
+    /**
+     * Format output for txt file.
+     */
     public String toFileString() {
         String typeLetter;
         switch (tasktype) {
@@ -84,7 +92,9 @@ public class Task {
                 + " | " + startdetail + " | " + enddetail;
     }
 
-    //Parse txt file into tasks.
+    /**
+     * Convert string (from file read) to Task object.
+     */
     public static Task fromFileString(String line) {
         String[] parts = line.split("\\s*\\|\\s*");
 
@@ -123,7 +133,9 @@ public class Task {
         return task;
     }
 
-    //Format how tasks are displayed for user.
+    /**
+     * Format how tasks are displayed for user.
+     */
     @Override
     public String toString() {
         switch (tasktype) {

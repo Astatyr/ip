@@ -13,11 +13,15 @@ import java.util.Scanner;
  *Lilith class, main application class.
  */
 public class Lilith {
-    //Links, change as necessary.
+    /**
+     * Links, change as necessary.
+     */
     private static final String CHEER_LINK = "https://www.youtube.com/watch?v=FAmojODvK64&list=RDFAmojODvK64&start_radio=1";
     private static final String DATA_PATH = "./LilithData/lilith.txt";
 
-    //Initializes Lilith.
+    /**
+     * Initializes Lilith.
+     */
     public static void main(String[] args) {
         System.out.println("Hello, I'm Lilith!");
         System.out.println("Would you like a strawberry cake?");
@@ -29,7 +33,6 @@ public class Lilith {
         if (!tasklist.isEmpty()) {
             System.out.println("Loaded " + tasklist.size() + " tasks!");
         }
-        //System.out.println("For Debugging - Current working directory: " + System.getProperty("user.dir"));
 
         while (true) {
             System.out.println("--------------------------------------------------------------");
@@ -43,7 +46,6 @@ public class Lilith {
                 handleCommand(input, tasklist, storage);
             }
         }
-
         scanner.close();
     }
 
