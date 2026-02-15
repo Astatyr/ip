@@ -58,8 +58,7 @@ public class Lilith extends Application {
         stage.setTitle("Lilith Chatbot GUI");
         stage.show();
 
-        printToDialog("Hello, I'm Lilith!");
-        printToDialog("Would you like a strawberry cake?");
+        printToDialog("Hello, I'm Lilith!", "Would you like a strawberry cake?");
 
         if (!tasklist.isEmpty()) {
             printToDialog("Loaded " + tasklist.size() + " tasks!");
@@ -82,6 +81,7 @@ public class Lilith extends Application {
         userInput.clear();
 
         if (input.equalsIgnoreCase("bye")) {
+            printToDialog("Bye-bye! I will always be here when you need me!");
             Platform.exit();
         }
     }
@@ -89,8 +89,10 @@ public class Lilith extends Application {
     /**
      * Appends text to the dialog area
     */
-    private void printToDialog(String text) {
-        dialogArea.appendText(text + "\n");
+    private void printToDialog(String... lines) {
+        for (String line : lines) {
+            dialogArea.appendText(line + "\n");
+        }
     }
 
     /**
@@ -102,3 +104,4 @@ public class Lilith extends Application {
 }
 
 
+//test
