@@ -57,8 +57,7 @@ public class Lilith extends Application {
         stage.show();
 
         // Show intro message
-        printToDialog("Hello, I'm Lilith!");
-        printToDialog("Would you like a strawberry cake?");
+        printToDialog("Hello, I'm Lilith!", "Would you like a strawberry cake?");
 
         // Show loaded tasks if any
         if (!tasklist.isEmpty()) {
@@ -80,13 +79,16 @@ public class Lilith extends Application {
         userInput.clear();
 
         if (input.equalsIgnoreCase("bye")) {
+            printToDialog("Bye-bye! I will always be here when you need me!");
             Platform.exit();
         }
     }
 
     /** Appends text to the dialog area */
-    private void printToDialog(String text) {
-        dialogArea.appendText(text + "\n");
+    private void printToDialog(String... lines) {
+        for (String line : lines) {
+            dialogArea.appendText(line + "\n");
+        }
     }
 
     /** Launch GUI */
@@ -96,3 +98,4 @@ public class Lilith extends Application {
 }
 
 
+//test
