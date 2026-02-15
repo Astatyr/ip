@@ -1,11 +1,16 @@
 package lilith.storage;
 
-import lilith.task.Task;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.ArrayList;
+
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
+import lilith.task.Task;
 
+/**
+ * Tests for Storage save/load behavior.
+ */
 public class StorageTest {
 
     @Test
@@ -14,6 +19,7 @@ public class StorageTest {
         Storage storage = new Storage("./data/test-lilith.txt");
 
         ArrayList<Task> tasks = new ArrayList<>();
+
         Task t1 = new Task("read book", null, null);
         t1.setTask(Task.TaskType.ToDos);
         t1.mark();
@@ -24,10 +30,10 @@ public class StorageTest {
         tasks.add(t1);
         tasks.add(t2);
 
-        // Save
+        // Save tasks
         storage.saveTasks(tasks);
 
-        // Load back
+        // Load back tasks
         ArrayList<Task> loaded = storage.loadTasks();
 
         assertEquals(2, loaded.size());
@@ -35,3 +41,4 @@ public class StorageTest {
         assertEquals(t2.toString(), loaded.get(1).toString());
     }
 }
+

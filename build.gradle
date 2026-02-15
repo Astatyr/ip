@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'checkstyle'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
@@ -45,6 +46,11 @@ jar {
     manifest {
         attributes "Main-Class": "lilith.Lilith"
     }
+}
+
+checkstyle {
+    toolVersion = "10.12.1"
+    configFile = file("config/checkstyle/checkstyle.xml")
 }
 
 run{
