@@ -29,12 +29,14 @@ public class Lilith extends Application {
     private TextField userInput;
     private Button sendButton;
 
+    /**
+     * Initialize GUI components, intro message and loading tasks.
+     */
     @Override
     public void start(Stage stage) {
         storage = new Storage(Config.DATA_PATH.toString());
         tasklist = storage.loadTasks();
 
-        // GUI components
         dialogArea = new TextArea();
         dialogArea.setEditable(false);
         dialogArea.setWrapText(true);
@@ -56,24 +58,24 @@ public class Lilith extends Application {
         stage.setTitle("Lilith Chatbot GUI");
         stage.show();
 
-        // Show intro message
         printToDialog("Hello, I'm Lilith!");
         printToDialog("Would you like a strawberry cake?");
 
-        // Show loaded tasks if any
         if (!tasklist.isEmpty()) {
             printToDialog("Loaded " + tasklist.size() + " tasks!");
         }
     }
 
-    /** Handles user input from GUI */
+    /**
+     * Handles user input from GUI
+    */
     private void handleUserInput() {
         String input = userInput.getText().trim();
         if (input.isEmpty()) {
             return;
         }
 
-        printToDialog("> " + input); // Echo input
+        printToDialog("> " + input);
         String response = Command.handle(input, tasklist, storage);
         printToDialog(response);
 
@@ -84,12 +86,16 @@ public class Lilith extends Application {
         }
     }
 
-    /** Appends text to the dialog area */
+    /**
+     * Appends text to the dialog area
+    */
     private void printToDialog(String text) {
         dialogArea.appendText(text + "\n");
     }
 
-    /** Launch GUI */
+    /**
+     * Launch GUI
+    */
     public static void main(String[] args) {
         launch(args);
     }
