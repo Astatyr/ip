@@ -102,6 +102,3 @@ public class Lilith extends Application {
         launch(args);
     }
 }
-
-
-//test
