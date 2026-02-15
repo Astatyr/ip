@@ -32,8 +32,19 @@ application {
 }
 
 shadowJar {
-    archiveBaseName = "lilith"
-    archiveClassifier = null
+    archiveBaseName.set("Lilith")
+    archiveClassifier.set("")
+    archiveVersion.set("")
+
+    manifest {
+        attributes "Main-Class": "lilith.Lilith"
+    }
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "lilith.Lilith"
+    }
 }
 
 run{
