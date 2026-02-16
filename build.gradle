@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'checkstyle'
     id 'application'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
@@ -62,15 +62,14 @@ shadowJar {
     archiveBaseName.set("Lilith")
     archiveClassifier.set("")
     archiveVersion.set("")
-
-    manifest {
-        attributes "Main-Class": "Launcher"
-    }
+    mergeServiceFiles()
 }
 
 jar {
     manifest {
-        attributes "Main-Class": "Launcher"
+        attributes(
+            "Main-Class": application.mainClass.get()
+        )
     }
 }
 
