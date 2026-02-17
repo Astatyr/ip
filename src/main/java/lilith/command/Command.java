@@ -3,6 +3,9 @@ package lilith.command;
 import java.awt.Desktop;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import lilith.config.Config;
 import lilith.parser.Parser;
@@ -43,25 +46,40 @@ public class Command {
                 if (taskList.isEmpty()) {
                     output.append("You're free!\n");
                 } else {
-                    for (int i = 0; i < taskList.size(); i++) {
-                        output.append((i + 1)).append(". ").append(taskList.get(i)).append("\n");
-                    }
+                    return IntStream.range(0, taskList.size())
+                            .mapToObj(i -> (i + 1) + ". " + taskList.get(i))
+                            .collect(Collectors.joining("\n"))
+                            + "\n";
+
                 }
 
             } else if (userInputLower.startsWith(Config.CMD_FIND)) {
+
                 String keyword = trimmedInput.substring(Config.CMD_FIND.length()).trim();
+
                 if (keyword.isEmpty()) {
                     output.append("Include which task you are looking for!\n");
+                    return output.toString();
+                }
+
+                String keywordLower = keyword.toLowerCase();
+
+                List<Task> matches = taskList.stream()
+                        .filter(task -> task.getTaskname()
+                                .toLowerCase()
+                                .contains(keywordLower))
+                        .toList();
+
+                if (matches.isEmpty()) {
+                    output.append("No matching tasks found for \"")
+                            .append(keyword)
+                            .append("\".\n");
                 } else {
-                    int matchCount = 0;
-                    for (Task task : taskList) {
-                        if (task.getTaskname().toLowerCase().contains(keyword.toLowerCase())) {
-                            matchCount++;
-                            output.append(matchCount).append(". ").append(task).append("\n");
-                        }
-                    }
-                    if (matchCount == 0) {
-                        output.append("No matching tasks found for \"").append(keyword).append("\".\n");
+                    for (int i = 0; i < matches.size(); i++) {
+                        output.append(i + 1)
+                                .append(". ")
+                                .append(matches.get(i))
+                                .append("\n");
                     }
                 }
 
