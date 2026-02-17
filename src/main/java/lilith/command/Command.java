@@ -82,6 +82,7 @@ public class Command {
             } else if (userInputLower.startsWith(Config.CMD_DEADLINE)) {
                 String deadlineInput = trimmedInput.substring(Config.CMD_DEADLINE.length()).trim();
                 String[] parts = Parser.parseDeadlineInput(deadlineInput);
+                assert parts.length == 2 : "Deadline parser contract broken";
                 Task task = new Task(parts[0], null, parts[1]);
                 task.setTask(Task.TaskType.Deadline);
                 taskList.add(task);
@@ -92,6 +93,7 @@ public class Command {
                 String eventInput = trimmedInput.substring(Config.CMD_EVENT.length()).trim();
                 String[] parts = Parser.parseEventInput(eventInput);
                 Task task = new Task(parts[0], parts[1], parts[2]);
+                assert parts.length == 3 : "Event parser contract broken";
                 task.setTask(Task.TaskType.Events);
                 taskList.add(task);
                 storage.saveTasks(taskList);
