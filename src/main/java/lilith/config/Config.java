@@ -8,6 +8,7 @@ public class Config {
 
     /**
      * Cheer link URL.
+     * Only Youtube link is allowed for security.
      */
     public static final String CHEER_LINK =
             "https://www.youtube.com/watch?v=FAmojODvK64&list=RDFAmojODvK64&start_radio=1";

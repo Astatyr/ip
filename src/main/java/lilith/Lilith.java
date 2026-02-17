@@ -34,7 +34,7 @@ public class Lilith extends Application {
      */
     @Override
     public void start(Stage stage) {
-        storage = new Storage(Config.DATA_PATH.toString());
+        storage = new Storage(Config.DATA_PATH);
         tasklist = storage.loadTasks();
 
         dialogArea = new TextArea();

@@ -1,7 +1,9 @@
 package lilith.command;
 
 import java.awt.Desktop;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import lilith.config.Config;
@@ -23,11 +25,15 @@ public class Command {
      * @return Result of the command as a String
      */
     public static String handle(String userInput, ArrayList<Task> taskList, Storage storage) {
-
-        String trimmedInput = userInput.trim();
-        String userInputLower = trimmedInput.toLowerCase();
+        assert userInput != null : "Command handler received null input";
+        assert taskList != null : "Task list should not be null";
+        assert storage != null : "Storage should not be null";
+            
+        StringBuilder output = new StringBuilder();
 
         try {
+            String trimmedInput = userInput.trim();
+            String userInputLower = trimmedInput.toLowerCase();
 
             /**
              * Exact commands
@@ -123,9 +129,17 @@ public class Command {
             Desktop.getDesktop().browse(new URI(Config.CHEER_LINK));
             return "Cheering operation GO!\n";
 
-        } catch (Exception e) {
-            return "Failed to open site.\n";
+        } catch (URISyntaxException e) {
+            System.out.println("Invalid URI syntax: " + e.getMessage());
+
+        } catch (IOException e) {
+            System.out.println("Failed to open browser: " + e.getMessage());
+
+        } catch (SecurityException e) {
+            System.out.println("Permission denied to open browser: " + e.getMessage());
         }
+
+        return "Failed to open cheer link.\n";
     }
 
     /**
