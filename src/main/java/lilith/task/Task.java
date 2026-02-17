@@ -58,10 +58,11 @@ public class Task {
     /**
      * Sets the task type.
      *
-     * @param input Task type.
+     * @param taskTypeInput Task type.
      */
-    public void setTask(TaskType input) {
-        this.tasktype = input;
+    public void setTask(TaskType taskTypeInput) {
+        assert taskTypeInput != null : "Task type cannot be null";
+        this.tasktype = taskTypeInput;
     }
 
     /**
@@ -84,6 +85,7 @@ public class Task {
      * @return Task formatted for saving.
      */
     public String toFileString() {
+        assert tasktype != null;
         String typeLetter;
 
         switch (tasktype) {
@@ -97,6 +99,7 @@ public class Task {
             typeLetter = "E";
             break;
         default:
+            assert false : "Unexpected task type: " + tasktype;
             typeLetter = "?";
             break;
         }
