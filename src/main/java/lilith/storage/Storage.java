@@ -89,11 +89,9 @@ public class Storage {
         try {
             ensureFileExists();
 
-            List<String> lines = new ArrayList<>();
-
-            for (Task task : tasks) {
-                lines.add(task.toFileString());
-            }
+            List<String> lines = tasks.stream()
+                    .map(Task::toFileString)
+                    .toList();
 
             Files.write(filePath, lines, StandardCharsets.UTF_8);
 

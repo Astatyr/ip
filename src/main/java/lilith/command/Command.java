@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import lilith.config.Config;
 import lilith.parser.Parser;
@@ -151,13 +154,10 @@ public class Command {
             return "You're free!\n";
         }
 
-        StringBuilder output = new StringBuilder();
-
-        for (int i = 0; i < taskList.size(); i++) {
-            output.append(i + 1).append(". ").append(taskList.get(i)).append("\n");
-        }
-
-        return output.toString();
+        return IntStream.range(0, taskList.size())
+                .mapToObj(i -> (i + 1) + ". " + taskList.get(i))
+                .collect(Collectors.joining("\n"))
+                + "\n";
     }
 
     /**
@@ -190,21 +190,22 @@ public class Command {
             return "Include which task you are looking for!\n";
         }
 
-        StringBuilder output = new StringBuilder();
-        int matchCount = 0;
+        String keywordLower = keyword.toLowerCase();
 
-        for (Task task : taskList) {
-            if (task.getTaskname().toLowerCase().contains(keyword.toLowerCase())) {
-                matchCount++;
-                output.append(matchCount).append(". ").append(task).append("\n");
-            }
-        }
+        List<Task> matches = taskList.stream()
+                .filter(task -> task.getTaskname()
+                        .toLowerCase()
+                        .contains(keywordLower))
+                .toList();
 
-        if (matchCount == 0) {
+        if (matches.isEmpty()) {
             return "No matching tasks found for \"" + keyword + "\".\n";
         }
 
-        return output.toString();
+        return IntStream.range(0, matches.size())
+                .mapToObj(i -> (i + 1) + ". " + matches.get(i))
+                .collect(Collectors.joining("\n"))
+                + "\n";
     }
 
     /**
