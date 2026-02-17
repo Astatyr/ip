@@ -1,7 +1,9 @@
 package lilith.command;
 
 import java.awt.Desktop;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import lilith.config.Config;
@@ -23,11 +25,15 @@ public class Command {
      * @return Result of the command as a String
      */
     public static String handle(String userInput, ArrayList<Task> taskList, Storage storage) {
+        assert userInput != null : "Command handler received null input";
+        assert taskList != null : "Task list should not be null";
+        assert storage != null : "Storage should not be null";
+            
         StringBuilder output = new StringBuilder();
 
         try {
             String trimmedInput = userInput.trim();
-            String userInputLower = trimmedInput.toLowerCase(); // for command comparisons
+            String userInputLower = trimmedInput.toLowerCase();
 
             if (userInputLower.equals(Config.CMD_CHEER)) {
                 openCheerLink();
@@ -125,8 +131,6 @@ public class Command {
 
         } catch (IndexOutOfBoundsException e) {
             output.append("That task does not exist!\n");
-        } catch (Exception e) {
-            output.append("Exception detected! Check format: use /by or /from /to for deadlines/events.\n");
         }
 
         return output.toString();
@@ -141,15 +145,24 @@ public class Command {
             return;
         }
 
-        if (Desktop.isDesktopSupported()) {
-            try {
-                Desktop.getDesktop().browse(new URI(Config.CHEER_LINK));
-                System.out.println("Cheering operation, GO!");
-            } catch (Exception e) {
-                System.out.println("Failed to open site: " + e.getMessage());
-            }
-        } else {
+        if (!Desktop.isDesktopSupported()) {
             System.out.println("Desktop API not supported on this system.");
+            return;
+        }
+
+        try {
+            URI uri = new URI(Config.CHEER_LINK);
+            Desktop.getDesktop().browse(uri);
+            System.out.println("Cheering operation, GO!");
+
+        } catch (URISyntaxException e) {
+            System.out.println("Invalid URI syntax: " + e.getMessage());
+
+        } catch (IOException e) {
+            System.out.println("Failed to open browser: " + e.getMessage());
+
+        } catch (SecurityException e) {
+            System.out.println("Permission denied to open browser: " + e.getMessage());
         }
     }
 }
