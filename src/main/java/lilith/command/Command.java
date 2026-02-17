@@ -121,7 +121,7 @@ public class Command {
 
         try {
             Desktop.getDesktop().browse(new URI(Config.CHEER_LINK));
-            return "Cheering GO! Link opened.\n";
+            return "Cheering operation GO!\n";
 
         } catch (Exception e) {
             return "Failed to open site.\n";

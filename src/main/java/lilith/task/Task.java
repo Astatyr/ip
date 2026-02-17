@@ -1,7 +1,5 @@
 package lilith.task;
 
-import java.time.LocalDateTime;
-
 import lilith.parser.Parser;
 
 /**
@@ -18,13 +16,16 @@ public class Task {
         Events
     }
 
+    /**
+     * Variables used. Do not make this final, in case there are future commands
+     * that can modify these values.
+     */
     private String taskname;
     private boolean status;
     private TaskType tasktype;
+
     private String startdetail;
     private String enddetail;
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
 
     /**
      * Constructs a Task with optional start and end details.
@@ -34,27 +35,18 @@ public class Task {
      * @param enddetail End date/time detail (optional).
      */
     public Task(String taskname, String startdetail, String enddetail) {
+
         this.taskname = taskname;
         this.status = false;
         this.tasktype = TaskType.ToDos;
+
         this.startdetail = startdetail;
         this.enddetail = enddetail;
 
-        try {
-            if (startdetail != null && !startdetail.isEmpty()) {
-                this.startDateTime = Parser.parseDateTime(startdetail);
-            }
-
-            if (enddetail != null && !enddetail.isEmpty()) {
-                this.endDateTime = Parser.parseDateTime(enddetail);
-            }
-
-        } catch (Exception e) {
-            this.startDateTime = null;
-            this.endDateTime = null;
-        }
+        assert tasktype != null : "Task type should never be null";
     }
 
+    
     /**
      * Sets the task type.
      *
@@ -84,6 +76,9 @@ public class Task {
      * @return Task formatted for saving.
      */
     public String toFileString() {
+
+        assert tasktype != null : "Task type must not be null";
+
         String typeLetter;
 
         switch (tasktype) {
@@ -123,6 +118,8 @@ public class Task {
      * @return Parsed Task object.
      */
     public static Task fromFileString(String line) {
+
+        assert line != null : "Saved task line should not be null";
 
         String[] parts = line.split("\\s*\\|\\s*");
 
@@ -183,31 +180,36 @@ public class Task {
             return "[T][" + (status ? "X" : " ") + "] " + taskname;
 
         case Deadline:
-            String formattedEnd =
-                    endDateTime != null
-                            ? Parser.formatDateTime(endDateTime)
-                            : enddetail;
-
             return "[D][" + (status ? "X" : " ") + "] "
-                    + taskname + " (by: " + formattedEnd + ")";
+                    + taskname + " (by: " + formatDetail(enddetail) + ")";
 
         case Events:
-            String formattedStart =
-                    startDateTime != null
-                            ? Parser.formatDateTime(startDateTime)
-                            : startdetail;
-
-            String formattedEndEvent =
-                    endDateTime != null
-                            ? Parser.formatDateTime(endDateTime)
-                            : enddetail;
-
             return "[E][" + (status ? "X" : " ") + "] "
-                    + taskname + " (from: " + formattedStart
-                    + " to: " + formattedEndEvent + ")";
+                    + taskname + " (from: " + formatDetail(startdetail)
+                    + " to: " + formatDetail(enddetail) + ")";
 
         default:
             return "[" + (status ? "X" : " ") + "] " + taskname;
+        }
+    }
+
+    /**
+     * Formats a date/time string for output if possible.
+     *
+     * @param detail Raw string detail.
+     * @return Formatted string or original if parsing fails.
+     */
+    private String formatDetail(String detail) {
+
+        if (detail == null) {
+            return "";
+        }
+
+        try {
+            return Parser.formatDateTime(Parser.parseDateTime(detail));
+
+        } catch (Exception e) {
+            return detail;
         }
     }
 
@@ -227,5 +229,3 @@ public class Task {
         return tasktype;
     }
 }
-
-
