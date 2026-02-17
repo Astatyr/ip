@@ -38,142 +38,99 @@ public class Command {
             String trimmedInput = userInput.trim();
             String userInputLower = trimmedInput.toLowerCase();
 
-            if (userInputLower.equals(Config.CMD_CHEER)) {
-                openCheerLink();
-                output.append("Cheering GO! Link opened.\n");
+            /**
+             * Exact commands
+             */
 
-            } else if (userInputLower.equals(Config.CMD_YES)) {
-                output.append("Okay, but convince the oven it's not a time machine!\n");
+            switch (userInputLower) {
 
-            } else if (userInputLower.equals(Config.CMD_NO)) {
-                output.append("Lilith is sad...\n");
+            case Config.CMD_CHEER:
+                return openCheerLink();
 
-            } else if (userInputLower.equals(Config.CMD_LIST)) {
-                if (taskList.isEmpty()) {
-                    output.append("You're free!\n");
-                } else {
-                    return IntStream.range(0, taskList.size())
-                            .mapToObj(i -> (i + 1) + ". " + taskList.get(i))
-                            .collect(Collectors.joining("\n"))
-                            + "\n";
+            case Config.CMD_YES:
+                return "Okay, but convince the oven it's not a time machine!\n";
 
-                }
+            case Config.CMD_NO:
+                return "Lilith is sad...\n";
 
-            } else if (userInputLower.startsWith(Config.CMD_FIND)) {
+            case Config.CMD_LIST:
+                return listTasks(taskList);
 
-                String keyword = trimmedInput.substring(Config.CMD_FIND.length()).trim();
-
-                if (keyword.isEmpty()) {
-                    output.append("Include which task you are looking for!\n");
-                    return output.toString();
-                }
-
-                String keywordLower = keyword.toLowerCase();
-
-                List<Task> matches = taskList.stream()
-                        .filter(task -> task.getTaskname()
-                                .toLowerCase()
-                                .contains(keywordLower))
-                        .toList();
-
-                if (matches.isEmpty()) {
-                    output.append("No matching tasks found for \"")
-                            .append(keyword)
-                            .append("\".\n");
-                } else {
-                    for (int i = 0; i < matches.size(); i++) {
-                        output.append(i + 1)
-                                .append(". ")
-                                .append(matches.get(i))
-                                .append("\n");
-                    }
-                }
-
-            } else if (userInputLower.startsWith(Config.CMD_TODO)) {
-                String taskName = trimmedInput.substring(Config.CMD_TODO.length()).trim();
-                Task task = new Task(taskName, null, null);
-                task.setTask(Task.TaskType.ToDos);
-                taskList.add(task);
-                storage.saveTasks(taskList);
-                output.append("Got it. I've added this task:\n").append(task).append("\n");
-
-            } else if (userInputLower.startsWith(Config.CMD_DEADLINE)) {
-                String deadlineInput = trimmedInput.substring(Config.CMD_DEADLINE.length()).trim();
-                String[] parts = Parser.parseDeadlineInput(deadlineInput);
-                assert parts.length == 2 : "Deadline parser contract broken";
-                Task task = new Task(parts[0], null, parts[1]);
-                task.setTask(Task.TaskType.Deadline);
-                taskList.add(task);
-                storage.saveTasks(taskList);
-                output.append("Got it. I've added this task:\n").append(task).append("\n");
-
-            } else if (userInputLower.startsWith(Config.CMD_EVENT)) {
-                String eventInput = trimmedInput.substring(Config.CMD_EVENT.length()).trim();
-                String[] parts = Parser.parseEventInput(eventInput);
-                Task task = new Task(parts[0], parts[1], parts[2]);
-                assert parts.length == 3 : "Event parser contract broken";
-                task.setTask(Task.TaskType.Events);
-                taskList.add(task);
-                storage.saveTasks(taskList);
-                output.append("Got it. I've added this task:\n").append(task).append("\n");
-
-            } else if (userInputLower.startsWith(Config.CMD_MARK)) {
-                int taskIndex = Integer.parseInt(trimmedInput.substring(Config.CMD_MARK.length()).trim()) - 1;
-                taskList.get(taskIndex).mark();
-                storage.saveTasks(taskList);
-                output.append("Nicely done! Good job!\n").append(taskList.get(taskIndex)).append("\n");
-
-            } else if (userInputLower.startsWith(Config.CMD_UNMARK)) {
-                int taskIndex = Integer.parseInt(trimmedInput.substring(Config.CMD_UNMARK.length()).trim()) - 1;
-                taskList.get(taskIndex).unmark();
-                storage.saveTasks(taskList);
-                output.append("Make sure to finish it soon, ok?\n").append(taskList.get(taskIndex)).append("\n");
-
-            } else if (userInputLower.startsWith(Config.CMD_DELETE)
-                    || userInputLower.startsWith(Config.CMD_DEL)
-                    || userInputLower.startsWith(Config.CMD_REMOVE)) {
-                int taskIndex = Integer.parseInt(trimmedInput.replaceAll("^(delete|del|remove)\\s+", "")) - 1;
-                Task removedTask = taskList.remove(taskIndex);
-                storage.saveTasks(taskList);
-                output.append("Ta-da! I have removed the task:\n").append(removedTask).append("\n");
-
-            } else if (userInputLower.equals(Config.CMD_EMPTY_ALL)) {
+            case Config.CMD_EMPTY_ALL:
                 taskList.clear();
                 storage.saveTasks(taskList);
-                output.append("All tasks have been cleared!\n");
+                return "All tasks have been cleared!\n";
 
-            } else if (userInputLower.equals(Config.CMD_BYE)) {
-                output.append("Bye-bye! I will always be here.\n");
+            case Config.CMD_BYE:
+                return "Bye-bye! I will always be here.\n";
 
-            } else {
-                output.append("Lilith cannot find the task type...\n");
+            default:
+                break;
             }
 
-        } catch (IndexOutOfBoundsException e) {
-            output.append("That task does not exist!\n");
-        }
+            /**
+             * Commands that starts with a keyword 
+             */
 
-        return output.toString();
+            if (userInputLower.startsWith(Config.CMD_FIND)) {
+                return handleFind(trimmedInput, taskList);
+            }
+
+            if (userInputLower.startsWith(Config.CMD_TODO)) {
+                return handleTodo(trimmedInput, taskList, storage);
+            }
+
+            if (userInputLower.startsWith(Config.CMD_DEADLINE)) {
+                return handleDeadline(trimmedInput, taskList, storage);
+            }
+
+            if (userInputLower.startsWith(Config.CMD_EVENT)) {
+                return handleEvent(trimmedInput, taskList, storage);
+            }
+
+            if (userInputLower.startsWith(Config.CMD_MARK)) {
+                return handleMark(trimmedInput, taskList, storage);
+            }
+
+            if (userInputLower.startsWith(Config.CMD_UNMARK)) {
+                return handleUnmark(trimmedInput, taskList, storage);
+            }
+
+            if (userInputLower.startsWith(Config.CMD_DELETE)
+                    || userInputLower.startsWith(Config.CMD_DEL)
+                    || userInputLower.startsWith(Config.CMD_REMOVE)) {
+                return handleDelete(trimmedInput, taskList, storage);
+            }
+
+            return "Lilith cannot find the task type...\n";
+
+        } catch (IndexOutOfBoundsException e) {
+            return "That task does not exist!\n";
+
+        } catch (NumberFormatException e) {
+            return "Please provide a valid task number.\n";
+
+        } catch (IllegalArgumentException e) {
+            return e.getMessage() + "\n";
+        }
     }
 
     /**
      * Opens the Cheer link in the default browser.
      */
-    private static void openCheerLink() {
+    private static String openCheerLink() {
+
         if (!Config.CHEER_LINK.startsWith("https://www.youtube.com/")) {
-            System.out.println("Invalid URL. Cannot open.");
-            return;
+            return "Invalid URL. Cannot open.\n";
         }
 
         if (!Desktop.isDesktopSupported()) {
-            System.out.println("Desktop API not supported on this system.");
-            return;
+            return "Desktop API not supported on this system.\n";
         }
 
         try {
-            URI uri = new URI(Config.CHEER_LINK);
-            Desktop.getDesktop().browse(uri);
-            System.out.println("Cheering operation, GO!");
+            Desktop.getDesktop().browse(new URI(Config.CHEER_LINK));
+            return "Cheering operation GO!\n";
 
         } catch (URISyntaxException e) {
             System.out.println("Invalid URI syntax: " + e.getMessage());
@@ -184,8 +141,155 @@ public class Command {
         } catch (SecurityException e) {
             System.out.println("Permission denied to open browser: " + e.getMessage());
         }
+
+        return "Failed to open cheer link.\n";
+    }
+
+    /**
+     * Lists all tasks in the task list.
+     */
+    private static String listTasks(ArrayList<Task> taskList) {
+
+        if (taskList.isEmpty()) {
+            return "You're free!\n";
+        }
+
+        return IntStream.range(0, taskList.size())
+                .mapToObj(i -> (i + 1) + ". " + taskList.get(i))
+                .collect(Collectors.joining("\n"))
+                + "\n";
+    }
+
+    /**
+     * Adds a task to the list and saves it.
+     */
+    private static String addTask(Task task, ArrayList<Task> taskList, Storage storage) {
+
+        taskList.add(task);
+        storage.saveTasks(taskList);
+
+        return "Got it. I've added this task:\n" + task + "\n";
+    }
+
+    /**
+     * Extracts the task index from a command.
+     */
+    private static int parseIndex(String input, String command) {
+
+        return Integer.parseInt(input.substring(command.length()).trim()) - 1;
+    }
+
+    /**
+     * Handles the find command.
+     */
+    private static String handleFind(String trimmedInput, ArrayList<Task> taskList) {
+
+        String keyword = trimmedInput.substring(Config.CMD_FIND.length()).trim();
+
+        if (keyword.isEmpty()) {
+            return "Include which task you are looking for!\n";
+        }
+
+        String keywordLower = keyword.toLowerCase();
+
+        List<Task> matches = taskList.stream()
+                .filter(task -> task.getTaskname()
+                        .toLowerCase()
+                        .contains(keywordLower))
+                .toList();
+
+        if (matches.isEmpty()) {
+            return "No matching tasks found for \"" + keyword + "\".\n";
+        }
+
+        return IntStream.range(0, matches.size())
+                .mapToObj(i -> (i + 1) + ". " + matches.get(i))
+                .collect(Collectors.joining("\n"))
+                + "\n";
+    }
+
+    /**
+     * Handles adding a todo task.
+     */
+    private static String handleTodo(String trimmedInput, ArrayList<Task> taskList, Storage storage) {
+
+        String taskName = trimmedInput.substring(Config.CMD_TODO.length()).trim();
+        Task task = new Task(taskName, null, null);
+        task.setTask(Task.TaskType.ToDos);
+
+        return addTask(task, taskList, storage);
+    }
+
+    /**
+     * Handles adding a deadline task.
+     */
+    private static String handleDeadline(String trimmedInput, ArrayList<Task> taskList, Storage storage) {
+
+        String deadlineInput = trimmedInput.substring(Config.CMD_DEADLINE.length()).trim();
+        String[] parts = Parser.parseDeadlineInput(deadlineInput);
+
+        Task task = new Task(parts[0], null, parts[1]);
+        task.setTask(Task.TaskType.Deadline);
+
+        return addTask(task, taskList, storage);
+    }
+
+    /**
+     * Handles adding an event task.
+     */
+    private static String handleEvent(String trimmedInput, ArrayList<Task> taskList, Storage storage) {
+
+        String eventInput = trimmedInput.substring(Config.CMD_EVENT.length()).trim();
+        String[] parts = Parser.parseEventInput(eventInput);
+
+        Task task = new Task(parts[0], parts[1], parts[2]);
+        task.setTask(Task.TaskType.Events);
+
+        return addTask(task, taskList, storage);
+    }
+
+    /**
+     * Handles marking a task as done.
+     */
+    private static String handleMark(String trimmedInput, ArrayList<Task> taskList, Storage storage) {
+
+        int taskIndex = parseIndex(trimmedInput, Config.CMD_MARK);
+
+        taskList.get(taskIndex).mark();
+        storage.saveTasks(taskList);
+
+        return "Nicely done! Good job!\n" + taskList.get(taskIndex) + "\n";
+    }
+
+    /**
+     * Handles unmarking a task as not done.
+     */
+    private static String handleUnmark(String trimmedInput, ArrayList<Task> taskList, Storage storage) {
+
+        int taskIndex = parseIndex(trimmedInput, Config.CMD_UNMARK);
+
+        taskList.get(taskIndex).unmark();
+        storage.saveTasks(taskList);
+
+        return "Make sure to finish it soon, ok?\n" + taskList.get(taskIndex) + "\n";
+    }
+
+    /**
+     * Handles deleting a task.
+     */
+    private static String handleDelete(String trimmedInput, ArrayList<Task> taskList, Storage storage) {
+
+        String[] words = trimmedInput.split("\\s+");
+        int taskIndex = Integer.parseInt(words[1]) - 1;
+
+        Task removedTask = taskList.remove(taskIndex);
+        storage.saveTasks(taskList);
+
+        return "Ta-da! I have removed the task:\n" + removedTask + "\n";
     }
 }
+
+
 
 
 
