@@ -73,7 +73,11 @@ public class Storage {
             }
 
         } catch (IOException e) {
-            System.out.println("Error loading tasks: " + e.getMessage());
+            if (e.getMessage() != null && e.getMessage().toLowerCase().contains("denied")) {
+                System.out.println("Permission denied: cannot read from " + filePath);
+            } else {
+                System.out.println("Error loading tasks: " + e.getMessage());
+            }
         }
 
         return tasks;
@@ -96,7 +100,11 @@ public class Storage {
             Files.write(filePath, lines, StandardCharsets.UTF_8);
 
         } catch (IOException e) {
-            System.out.println("Error saving tasks: " + e.getMessage());
+            if (e.getMessage() != null && e.getMessage().toLowerCase().contains("denied")) {
+                System.out.println("Permission denied: cannot write to " + filePath);
+            } else {
+                System.out.println("Error saving tasks: " + e.getMessage());
+            }
         }
     }
 }

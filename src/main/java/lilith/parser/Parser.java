@@ -140,10 +140,27 @@ public class Parser {
             );
         }
 
-        parseDateTime(fromTo[0].trim());
-        parseDateTime(fromTo[1].trim());
+        String fromTrimmed = fromTo[0].trim();
+        String toTrimmed = fromTo[1].trim();
+        parseDateTime(fromTrimmed);
+        parseDateTime(toTrimmed);
+        validateDateRange(fromTrimmed, toTrimmed);
+        return new String[]{name, fromTrimmed, toTrimmed};
+    }
 
-        return new String[]{name, fromTo[0].trim(), fromTo[1].trim()};
+    /**
+     * Validates that the start date is before the end date.
+     *
+     * @param start Start date string.
+     * @param end End date string.
+     * @throws IllegalArgumentException If start is not before end.
+     */
+    public static void validateDateRange(String start, String end) {
+        LocalDateTime startDt = parseDateTime(start);
+        LocalDateTime endDt = parseDateTime(end);
+        if (!startDt.isBefore(endDt)) {
+            throw new IllegalArgumentException("Start date must be before end date.");
+        }
     }
 
     /**
