@@ -6,6 +6,11 @@ Lilith is a personal task management chatbot with a themed GUI, inspired by the 
 
 ---
 
+## Download
+[Latest Release](https://github.com/Astatyr/ip/releases/latest)
+
+---
+
 ## Getting Started
 
 ### Prerequisites
