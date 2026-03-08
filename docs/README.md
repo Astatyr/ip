@@ -2,7 +2,7 @@
 
 Lilith is a personal task management chatbot with a themed GUI, inspired by the character Lilith. She helps you manage todos, deadlines, and events — with a personality to match.
 
-![Ui](docs/Ui.png)
+![Ui](Ui.png)
 
 ---
 
