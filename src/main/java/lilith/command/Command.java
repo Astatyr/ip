@@ -44,7 +44,7 @@ public class Command {
                 return openCheerLink();
 
             case Config.CMD_YES:
-                return "Okay, but convince the oven it's not a time machine!\n";
+                return "/IMG:/lilith/strawberry_cake.png\n\nHere is your cake!";
 
             case Config.CMD_NO:
                 return "Lilith is sad...\n";
@@ -98,7 +98,7 @@ public class Command {
                 return handleUpdate(trimmedInput, taskList, storage);
             }
 
-            return "Lilith cannot find the task type...\n";
+            return "Lilith cannot understand the command...\n";
 
         } catch (IndexOutOfBoundsException e) {
             return "That task does not exist!\n";
@@ -117,7 +117,7 @@ public class Command {
     private static String openCheerLink() {
 
         if (!Config.CHEER_LINK.startsWith("https://www.youtube.com/")) {
-            return "Invalid URL. Cannot open.\n";
+            return "Invalid URL. I cannot open it.\n";
         }
 
         if (!Desktop.isDesktopSupported()) {
@@ -164,7 +164,7 @@ public class Command {
         taskList.add(task);
         storage.saveTasks(taskList);
 
-        return "Got it. I've added this task:\n" + task + "\n";
+        return "Okay! I've added this task:\n" + task + "\n";
     }
 
     /**
@@ -183,7 +183,7 @@ public class Command {
         String keyword = trimmedInput.substring(Config.CMD_FIND.length()).trim();
 
         if (keyword.isEmpty()) {
-            return "Include which task you are looking for!\n";
+            return "Tell me which task you are looking for.\n";
         }
 
         String keywordLower = keyword.toLowerCase();

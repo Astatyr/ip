@@ -74,7 +74,7 @@ public class Parser {
         }
 
         throw new DateTimeParseException(
-                "Date does not match any accepted format",
+                "I can't understand your date format.",
                 trimmed,
                 0
         );

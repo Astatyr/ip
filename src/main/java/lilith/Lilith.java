@@ -12,8 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.shape.Circle;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -111,6 +109,7 @@ public class Lilith extends Application {
 
     /**
      * Handles user input from GUI.
+     * Messages from Command.java are split by double newlines to allow multiple bot responses.
      */
     private void handleUserInput() {
         String input = userInput.getText().trim();
@@ -120,7 +119,12 @@ public class Lilith extends Application {
 
         addUserMessage(input);
         String response = Command.handle(input, tasklist, storage);
-        addBotMessageOrError(response, isErrorResponse(response));
+        String[] parts = response.split("\n\n");
+        for (String part : parts) {
+            if (!part.isBlank()) {
+                addBotMessageOrError(part.trim(), isErrorResponse(part));
+            }
+        }
 
         userInput.clear();
 
@@ -151,9 +155,9 @@ public class Lilith extends Application {
         label.setWrapText(true);
         label.setMaxWidth(400);
         label.setStyle(
-        "-fx-background-color: #ffffff;"
-        + "-fx-text-fill: #1a1a2e;"
-        + "-fx-background-radius: 12 12 2 12;"
+            "-fx-background-color: #ffffff;"
+            + "-fx-text-fill: #1a1a2e;"
+            + "-fx-background-radius: 12 12 2 12;"
             + "-fx-padding: 8 12;"
         );
 
@@ -173,6 +177,10 @@ public class Lilith extends Application {
     /**
      * Adds a bot message bubble with optional error styling.
      * Load and show circular profile picture and name header only if the last message was from the user.
+     * Styles error messages with a red background and border.
+     * Normal messages have a dark gray background and light blue border.
+     * Supports both text and image responses.
+     * Image responses should start with "/IMG:" followed by the image path relative to resources.
      */
     private void addBotMessageOrError(String text, boolean isError) {
         if (lastMessageWasUser) {
@@ -203,23 +211,51 @@ public class Lilith extends Application {
         String bubbleColor = isError ? "#982121" : "#2a4a6b";
         String borderColor = isError ? "#720000" : "#c8dff0";
 
-        Label label = new Label(text.trim());
-        label.setWrapText(true);
-        label.setMaxWidth(400);
-        label.setStyle(
-            "-fx-background-color: " + bubbleColor + ";"
-            + "-fx-text-fill: #ffffff;"
-            + "-fx-border-color: " + borderColor + ";"
-            + "-fx-border-width: 1;"
-            + "-fx-background-radius: 12 12 12 2;"
-            + "-fx-border-radius: 12 12 12 2;"
-            + "-fx-padding: 8 12;"
-        );
+        javafx.scene.Node content;
 
-        HBox row = new HBox(label);
+        if (text.startsWith("/IMG:")) {
+            try {
+                String imagePath = text.substring(5).trim();
+                javafx.scene.image.Image mainImage = new javafx.scene.image.Image(
+                    getClass().getResourceAsStream(imagePath)
+                );
+                javafx.scene.image.ImageView imageView = new javafx.scene.image.ImageView(mainImage);
+
+                imageView.setFitWidth(250);
+                imageView.setPreserveRatio(true);
+
+                VBox imageWrapper = new VBox(imageView);
+                imageWrapper.setStyle(
+                    "-fx-background-color: " + bubbleColor + ";"
+                    + "-fx-border-color: " + borderColor + ";"
+                    + "-fx-border-width: 1;"
+                    + "-fx-background-radius: 12 12 12 2;"
+                    + "-fx-border-radius: 12 12 12 2;"
+                    + "-fx-padding: 5;"
+                );
+                content = imageWrapper;
+            } catch (Exception e) {
+                content = new Label("Error loading image: " + text);
+            }
+        } else {
+            Label label = new Label(text.trim());
+            label.setWrapText(true);
+            label.setMaxWidth(400);
+            label.setStyle(
+                "-fx-background-color: " + bubbleColor + ";"
+                + "-fx-text-fill: #ffffff;"
+                + "-fx-border-color: " + borderColor + ";"
+                + "-fx-border-width: 1;"
+                + "-fx-background-radius: 12 12 12 2;"
+                + "-fx-border-radius: 12 12 12 2;"
+                + "-fx-padding: 8 12;"
+            );
+            content = label;
+        }
+
+        HBox row = new HBox(content);
         row.setAlignment(Pos.CENTER_LEFT);
         chatBox.getChildren().add(row);
-
         lastMessageWasUser = false;
     }
 

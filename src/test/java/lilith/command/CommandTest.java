@@ -37,7 +37,7 @@ class CommandTest {
 
         assertEquals(1, tasklist.size(), "Tasklist should have 1 task after adding a todo");
         assertTrue(tasklist.get(0).getTaskname().equals("Read book"), "Task name should match input");
-        assertTrue(output.contains("Got it. I've added this task"), "Output should confirm addition");
+        assertTrue(output.contains("Okay! I've added this task"), "Output should confirm addition");
     }
 
     @Test
