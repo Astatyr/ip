@@ -108,6 +108,8 @@ The JAR then can be found in `build/libs/Lilith.jar`.
 - JUnit 5
 - Gradle with Shadow plugin for fat JAR
 
+---
+
 ## Acknowledgments & Credits
 
 ### Character & Aesthetic
