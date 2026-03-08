@@ -210,6 +210,10 @@ public class Command {
     private static String handleTodo(String trimmedInput, ArrayList<Task> taskList, Storage storage) {
 
         String taskName = trimmedInput.substring(Config.CMD_TODO.length()).trim();
+        if (taskName.isEmpty()) {
+            throw new IllegalArgumentException("Todo task name cannot be empty.");
+        }
+        taskName = taskName.replaceAll("\\s+", " ");
         Task task = new Task(taskName, null, null);
         task.setTask(Task.TaskType.ToDos);
 

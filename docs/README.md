@@ -107,3 +107,17 @@ The JAR then can be found in `build/libs/Lilith.jar`.
 - JavaFX 21
 - JUnit 5
 - Gradle with Shadow plugin for fat JAR
+
+## Acknowledgments & Credits
+
+### Character & Aesthetic
+* **Source Material:** The character **Lilith**, her name, and the high-contrast visual theme are inspired by the game *The NOexistenceN of you AND me*.
+* **Visual Assets:** The bot's profile picture (`pfp.png`) and thematic icons (like the strawberry cake) are from or adapted from the original game assets for educational and non-commercial use.
+
+### Technical Credits
+This project was developed as part of a software engineering module at the **National University of Singapore (NUS)**.
+
+---
+
+## License
+This project is for educational purposes. Please respect the original creators of *The NOexistenceN of you AND me* regarding any redistribution of the character-based assets.
