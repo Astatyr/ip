@@ -46,7 +46,6 @@ public class Task {
         assert tasktype != null : "Task type should never be null";
     }
 
-    
     /**
      * Sets the task type.
      *
@@ -69,6 +68,27 @@ public class Task {
      */
     public void unmark() {
         this.status = false;
+    }
+
+    /**
+     * Sets the task name.
+     */
+    public void setTaskName(String taskname) {
+        this.taskname = taskname;
+    }
+
+    /**
+     * Sets the task start detail.
+     */
+    public void setStartDetail(String startdetail) {
+        this.startdetail = startdetail;
+    }
+
+    /**
+     * Sets the task end detail.
+     */
+    public void setEndDetail(String enddetail) {
+        this.enddetail = enddetail;
     }
 
     /**

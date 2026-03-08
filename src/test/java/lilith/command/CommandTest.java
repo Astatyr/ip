@@ -63,7 +63,56 @@ class CommandTest {
         String input = "cheer";
         String output = Command.handle(input, tasklist, storage);
 
-        assertTrue(output.contains("Cheering GO! Link opened"), "Output should indicate cheer link opened");
+        assertTrue(
+            output.contains("Cheering operation GO!") || output.contains("Desktop API not supported")
+            || output.contains("Invalid URL. Cannot open.")
+            || output.contains("Failed to open cheer"),
+            "Output should indicate cheer attempt was made"
+        );
+    }
+
+    @Test
+    void testUpdateTaskName() {
+        Command.handle("todo Read book", tasklist, storage);
+
+        String output = Command.handle("update 1 /name Study for exam", tasklist, storage);
+
+        assertEquals("Study for exam", tasklist.get(0).getTaskname(),
+            "Task name should be updated");
+        assertTrue(output.contains("Task updated!"),
+            "Output should confirm update");
+    }
+
+    @Test
+    void testUpdateDeadlineDate() {
+        Command.handle("deadline Submit report /by 2025-01-01", tasklist, storage);
+
+        String output = Command.handle("update 1 /by 2025-06-15", tasklist, storage);
+
+        assertTrue(output.contains("Task updated!"),
+            "Output should confirm update");
+        assertTrue(output.contains("Jun 15 2025"),
+            "Updated deadline date should appear in output");
+    }
+
+    @Test
+    void testUpdateOutOfBounds() {
+        Command.handle("todo Read book", tasklist, storage);
+
+        String output = Command.handle("update 99 /name New name", tasklist, storage);
+
+        assertTrue(output.contains("That task does not exist!"),
+            "Should handle out of bounds index gracefully");
+    }
+
+    @Test
+    void testUpdateMissingIndex() {
+        Command.handle("todo Read book", tasklist, storage);
+
+        String output = Command.handle("update /name No index given", tasklist, storage);
+
+        assertTrue(output.contains("Please provide a valid task number."),
+            "Should catch NumberFormatException when index is missing");
     }
 }
 

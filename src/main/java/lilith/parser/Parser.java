@@ -145,5 +145,50 @@ public class Parser {
 
         return new String[]{name, fromTo[0].trim(), fromTo[1].trim()};
     }
+
+    /**
+     * Parses the update command input into a String array of field updates.
+     * Returns a 4-element array: [name, by, from, to]
+     * Any field not provided will be null.
+     * parseDateTime(val) validates the date — throws if invalid
+     *
+     * @param input User update command input after "update (index)" is removed.
+     * @return String array of [name, by, from, to].
+     */
+    public static String[] parseUpdateInput(String input) {
+        String[] result = new String[4];
+
+        if (input.contains("/name")) {
+            String after = input.substring(input.indexOf("/name") + 5).trim();
+            String[] split = after.split("/by|/from|/to", 2);
+            result[0] = split[0].trim();
+        }
+
+        if (input.contains("/by")) {
+            String after = input.substring(input.indexOf("/by") + 3).trim();
+            String[] split = after.split("/name|/from|/to", 2);
+            String val = split[0].trim();
+            parseDateTime(val);
+            result[1] = val;
+        }
+
+        if (input.contains("/from")) {
+            String after = input.substring(input.indexOf("/from") + 5).trim();
+            String[] split = after.split("/name|/by|/to", 2);
+            String val = split[0].trim();
+            parseDateTime(val);
+            result[2] = val;
+        }
+
+        if (input.contains("/to")) {
+            String after = input.substring(input.indexOf("/to") + 3).trim();
+            String[] split = after.split("/name|/by|/from", 2);
+            String val = split[0].trim();
+            parseDateTime(val);
+            result[3] = val;
+        }
+
+        return result;
+    }
 }
 

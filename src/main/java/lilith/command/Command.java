@@ -21,6 +21,8 @@ public class Command {
 
     /**
      * Handles a user input command.
+     * switch is used for handling exact commands.
+     * If-else for commands that start with a keyword.
      *
      * @param userInput Original user input string
      * @param taskList  List of tasks
@@ -31,16 +33,10 @@ public class Command {
         assert userInput != null : "Command handler received null input";
         assert taskList != null : "Task list should not be null";
         assert storage != null : "Storage should not be null";
-            
-        StringBuilder output = new StringBuilder();
 
         try {
             String trimmedInput = userInput.trim();
             String userInputLower = trimmedInput.toLowerCase();
-
-            /**
-             * Exact commands
-             */
 
             switch (userInputLower) {
 
@@ -67,10 +63,6 @@ public class Command {
             default:
                 break;
             }
-
-            /**
-             * Commands that starts with a keyword 
-             */
 
             if (userInputLower.startsWith(Config.CMD_FIND)) {
                 return handleFind(trimmedInput, taskList);
@@ -100,6 +92,10 @@ public class Command {
                     || userInputLower.startsWith(Config.CMD_DEL)
                     || userInputLower.startsWith(Config.CMD_REMOVE)) {
                 return handleDelete(trimmedInput, taskList, storage);
+            }
+
+            if (userInputLower.startsWith(Config.CMD_UPDATE)) {
+                return handleUpdate(trimmedInput, taskList, storage);
             }
 
             return "Lilith cannot find the task type...\n";
@@ -286,6 +282,42 @@ public class Command {
         storage.saveTasks(taskList);
 
         return "Ta-da! I have removed the task:\n" + removedTask + "\n";
+    }
+
+    /**
+     * Handles updating an existing task's fields.
+     */
+    private static String handleUpdate(String trimmedInput, ArrayList<Task> taskList, Storage storage) {
+        // Split "update 2 /name foo /by 2025-01-01" → ["update", "2", "/name foo /by 2025-01-01"]
+        String afterCmd = trimmedInput.substring(Config.CMD_UPDATE.length()).trim();
+        String[] firstSplit = afterCmd.split("\\s+", 2);
+
+        if (firstSplit.length < 2) {
+            throw new IllegalArgumentException(
+                "Use: update <index> [/name <name>] [/by <date>] [/from <date>] [/to <date>]"
+            );
+        }
+
+        int taskIndex = Integer.parseInt(firstSplit[0]) - 1;
+        Task task = taskList.get(taskIndex); // throws IndexOutOfBoundsException if bad index
+
+        String[] updates = Parser.parseUpdateInput(firstSplit[1]);
+
+        if (updates[0] != null) {
+            task.setTaskName(updates[0]);
+        }
+        if (updates[1] != null) {
+            task.setEndDetail(updates[1]); // /by → enddetail for Deadline
+        }
+        if (updates[2] != null) {
+            task.setStartDetail(updates[2]); // /from → startdetail for Event
+        }
+        if (updates[3] != null) {
+            task.setEndDetail(updates[3]); // /to → enddetail for Event
+        }
+
+        storage.saveTasks(taskList);
+        return "Task updated!\n" + task + "\n";
     }
 }
 

@@ -36,8 +36,8 @@ public class Config {
     public static final String CMD_DEL = "del ";
     public static final String CMD_REMOVE = "remove ";
     public static final String CMD_EMPTY_ALL = "/emptyall";
+    public static final String CMD_UPDATE = "update ";
 
     // Private constructor to prevent instantiation
     private Config() {}
 }
-
