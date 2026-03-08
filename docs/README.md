@@ -1,30 +1,109 @@
-# Duke User Guide
+# Lilith
 
-// Update the title above to match the actual product name
+Lilith is a personal task management chatbot with a themed GUI, inspired by the character Lilith. She helps you manage todos, deadlines, and events — with a personality to match.
 
-// Product screenshot goes here
+![Ui](docs/Ui.png)
 
-// Product intro goes here
+---
 
-## Adding deadlines
+## Getting Started
 
-// Describe the action and its outcome.
+### Prerequisites
+- Java 21 ([Download here](https://adoptium.net/temurin/releases/?version=21))
+- Note that Jave versions higher than 21 may experience issues due to incompatibility with Gradle.
 
-// Give examples of usage
-
-Example: `keyword (optional arguments)`
-
-// A description of the expected outcome goes here
-
+### Running the app
 ```
-expected output
+java -jar Lilith.jar
 ```
 
-## Feature ABC
+---
 
-// Feature details
+## Features
 
+### Task Types
+Lilith supports three types of tasks:
 
-## Feature XYZ
+| Type | Command | Description |
+|---|---|---|
+| Todo | `todo <task>` | A simple task with no date |
+| Deadline | `deadline <task> /by <date>` | A task due by a specific date |
+| Event | `event <task> /from <date> /to <date>` | A task with a start and end time |
 
-// Feature details
+### Commands
+
+| Command | Description | Example |
+|---|---|---|
+| `list` | Show all tasks | `list` |
+| `find <keyword>` | Search tasks by name | `find book` |
+| `mark <index>` | Mark a task as done | `mark 1` |
+| `unmark <index>` | Mark a task as not done | `unmark 1` |
+| `update <index> [fields]` | Edit an existing task | `update 1 /name new name` |
+| `delete <index>` | Delete a task | `delete 1` |
+| `/emptyall` | Clear all tasks | `/emptyall` |
+| `bye` | Exit the app | `bye` |
+| `cheer` | You look like you need it | `cheer` |
+
+### Update Command Fields
+The `update` command accepts any combination of these fields:
+
+```
+update <index> [/name <new name>] [/by <date>] [/from <date>] [/to <date>]
+```
+
+Examples:
+```
+update 2 /name Submit assignment
+update 1 /by 2025-12-01 1800
+update 3 /from 2025-01-01 /to 2025-01-02
+```
+
+### Date Formats
+Lilith accepts a wide range of date formats:
+
+```
+2025-01-30 1800
+2025/01/30 18:00
+30-01-2025 1800
+30/01/2025
+2025-01-30
+```
+
+---
+
+## Data Storage
+Tasks are automatically saved to `./LilithData/lilith.txt` relative to where the app is run. The file is created automatically if it does not exist.
+
+---
+
+## Running via Command Line Interface (CLI)
+```
+java -jar Lilith.jar cli
+```
+
+---
+
+## For Developers
+
+### Config File
+Can be found in `./src/main/java/lilith/config`.
+
+### Resource Files
+Can be found in `./src/main/resources/lilith`.
+
+### Building from source
+```
+./gradlew clean shadowJar
+```
+The JAR then can be found in `build/libs/Lilith.jar`.
+
+### Running tests
+```
+./gradlew test
+```
+
+### Tech Stack
+- Java 21
+- JavaFX 21
+- JUnit 5
+- Gradle with Shadow plugin for fat JAR
