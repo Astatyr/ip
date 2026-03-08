@@ -11,6 +11,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.shape.Circle;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -33,16 +36,22 @@ public class Lilith extends Application {
     private ScrollPane scrollPane;
     private TextField userInput;
     private Button sendButton;
+    private boolean lastMessageWasUser = true;
 
     /**
      * Initialize GUI components, intro message and loading tasks.
+     * Uses VBox for chat area and HBox for input row.
+     * Styles messages with CSS for better appearance.
+     * Auto-scrolls to the latest message when new content is added.
+     * Handles user input and bot responses, including error styling.
+     * Shows profile picture and name header for bot messages only at the start of a new bot series.
+     * Exits application gracefully on "bye" command.
      */
     @Override
     public void start(Stage stage) {
         storage = new Storage(Config.DATA_PATH);
         tasklist = storage.loadTasks();
 
-        // Chat area: a VBox of message bubbles inside a ScrollPane
         chatBox = new VBox(8);
         chatBox.setPadding(new Insets(10));
         chatBox.setStyle("-fx-background-color: #bbddff;");
@@ -50,28 +59,26 @@ public class Lilith extends Application {
         scrollPane = new ScrollPane(chatBox);
         scrollPane.setFitToWidth(true);
         scrollPane.setStyle("-fx-background: #bbddff; -fx-background-color: #bbddff;");
-        // Auto-scroll to bottom whenever new content is added
         scrollPane.vvalueProperty().bind(chatBox.heightProperty());
 
-        // Input row: text field + send button side by side
         userInput = new TextField();
         userInput.setPromptText("Type a command...");
         userInput.setStyle(
-            "-fx-background-color: #ffffff; "
-            + "-fx-text-fill: #1a1a2e; "       // dark text for readability
-            + "-fx-border-color: #97bbdb; "    // her shadowed hair blue
-            + "-fx-border-radius: 12; "
-            + "-fx-background-radius: 12; "
+            "-fx-background-color: #ffffff;"
+            + "-fx-text-fill: #1a1a2e;"
+            + "-fx-border-color: #97bbdb;"
+            + "-fx-border-radius: 12;"
+            + "-fx-background-radius: 12;"
             + "-fx-padding: 8 12;"
         );
-        HBox.setHgrow(userInput, Priority.ALWAYS); // input stretches to fill width
+        HBox.setHgrow(userInput, Priority.ALWAYS);
 
         sendButton = new Button("Send");
         sendButton.setStyle(
-            "-fx-background-color: #2a4a6b; "  // muted deep blue, not jarring
-            + "-fx-text-fill: #e8e8f0; "
-            + "-fx-background-radius: 12; "
-            + "-fx-padding: 8 16; "
+            "-fx-background-color: #2a4a6b;"
+            + "-fx-text-fill: #e8e8f0;"
+            + "-fx-background-radius: 12;"
+            + "-fx-padding: 8 16;"
             + "-fx-cursor: hand;"
         );
 
@@ -83,13 +90,13 @@ public class Lilith extends Application {
         inputRow.setAlignment(Pos.CENTER);
         inputRow.setStyle("-fx-background: #f0f5fa; -fx-background-color: #f0f5fa;");
 
-        // Main layout: chat area grows, input row stays fixed at bottom
         VBox layout = new VBox(scrollPane, inputRow);
-        VBox.setVgrow(scrollPane, Priority.ALWAYS); // chat area fills all available space
+        VBox.setVgrow(scrollPane, Priority.ALWAYS);
         Scene scene = new Scene(layout, 600, 500);
 
         stage.setScene(scene);
         stage.setTitle("Lilith");
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/lilith/icon.png")));
         stage.setMinWidth(400);
         stage.setMinHeight(300);
         stage.show();
@@ -113,7 +120,7 @@ public class Lilith extends Application {
 
         addUserMessage(input);
         String response = Command.handle(input, tasklist, storage);
-        addBotMessage(response, isErrorResponse(response));
+        addBotMessageOrError(response, isErrorResponse(response));
 
         userInput.clear();
 
@@ -144,47 +151,76 @@ public class Lilith extends Application {
         label.setWrapText(true);
         label.setMaxWidth(400);
         label.setStyle(
-        "-fx-background-color: #ffffff; "
-        + "-fx-text-fill: #1a1a2e; "
-        + "-fx-background-radius: 12 12 2 12; "
+        "-fx-background-color: #ffffff;"
+        + "-fx-text-fill: #1a1a2e;"
+        + "-fx-background-radius: 12 12 2 12;"
             + "-fx-padding: 8 12;"
         );
 
         HBox row = new HBox(label);
         row.setAlignment(Pos.CENTER_RIGHT);
         chatBox.getChildren().add(row);
+        lastMessageWasUser = true;
     }
 
     /**
      * Adds a bot message bubble — left-aligned, dark gray or red for errors.
      */
     private void addBotMessage(String text) {
-        addBotMessage(text, false);
+        addBotMessageOrError(text, false);
     }
 
     /**
      * Adds a bot message bubble with optional error styling.
+     * Load and show circular profile picture and name header only if the last message was from the user.
      */
-    private void addBotMessage(String text, boolean isError) {
+    private void addBotMessageOrError(String text, boolean isError) {
+        if (lastMessageWasUser) {
+            javafx.scene.image.Image pfpImage = new javafx.scene.image.Image(
+                getClass().getResourceAsStream("/lilith/pfp.png")
+            );
+            javafx.scene.image.ImageView pfpView = new javafx.scene.image.ImageView(pfpImage);
+            pfpView.setFitWidth(32);
+            pfpView.setFitHeight(32);
+
+            javafx.scene.shape.Circle clip = new javafx.scene.shape.Circle(16, 16, 16);
+            pfpView.setClip(clip);
+
+            Label nameLabel = new Label("Lilith");
+            nameLabel.setStyle(
+                "-fx-text-fill: #c02a2a;"
+                + "-fx-font-weight: bold;"
+                + "-fx-padding: 4 0 0 6;"
+                + "-fx-effect: dropshadow(three-pass-box, #2a4a6b, 1, 1, 0, 0);"
+            );
+
+            HBox nameRow = new HBox(5, pfpView, nameLabel); // 5px gap between circle and name
+            nameRow.setAlignment(Pos.CENTER_LEFT);
+            nameRow.setPadding(new Insets(0, 0, 0, 12));
+            chatBox.getChildren().add(nameRow);
+        }
+
         String bubbleColor = isError ? "#982121" : "#2a4a6b";
         String borderColor = isError ? "#720000" : "#c8dff0";
 
-        Label label = new Label("Lilith: " + text.trim());
+        Label label = new Label(text.trim());
         label.setWrapText(true);
         label.setMaxWidth(400);
         label.setStyle(
-            "-fx-background-color: " + bubbleColor + "; "
-            + "-fx-text-fill: " + (isError ? "#ffffff" : "#ffffff") + "; "
-            + "-fx-border-color: " + borderColor + "; "
-            + "-fx-border-width: 1; "
-            + "-fx-background-radius: 12 12 12 2; "
-            + "-fx-border-radius: 12 12 12 2; "
+            "-fx-background-color: " + bubbleColor + ";"
+            + "-fx-text-fill: #ffffff;"
+            + "-fx-border-color: " + borderColor + ";"
+            + "-fx-border-width: 1;"
+            + "-fx-background-radius: 12 12 12 2;"
+            + "-fx-border-radius: 12 12 12 2;"
             + "-fx-padding: 8 12;"
         );
 
         HBox row = new HBox(label);
         row.setAlignment(Pos.CENTER_LEFT);
         chatBox.getChildren().add(row);
+
+        lastMessageWasUser = false;
     }
 
     /**
