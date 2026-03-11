@@ -160,6 +160,11 @@ public class Lilith extends Application {
         HBox leftSpacer = new HBox();
         HBox.setHgrow(leftSpacer, Priority.ALWAYS);
 
+        // Dynamically adjust left spacer to keep clock centered when help button is visible
+        helpButton.layoutBoundsProperty().addListener((obs, oldVal, newVal) -> 
+            leftSpacer.setMinWidth(newVal.getWidth())
+        );
+
         HBox rightSpacer = new HBox(helpButton);
         HBox.setHgrow(rightSpacer, Priority.ALWAYS);
         rightSpacer.setAlignment(Pos.CENTER_RIGHT);
