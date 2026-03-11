@@ -134,7 +134,6 @@ public class Lilith extends Application {
         clockLabel.setStyle(
             "-fx-text-fill: #1a1a2e;"
             + "-fx-font-size: 12px;"
-            + "-fx-padding: 0 0 0 12;"
         );
         updateClock();
 
@@ -158,17 +157,21 @@ public class Lilith extends Application {
         );
         helpButton.setOnAction(e -> showHelp());
 
-        HBox header = new HBox(clockLabel);
-        HBox.setHgrow(clockLabel, Priority.ALWAYS);
-        header.getChildren().add(helpButton);
-        header.setAlignment(Pos.CENTER_LEFT);
+        HBox leftSpacer = new HBox();
+        HBox.setHgrow(leftSpacer, Priority.ALWAYS);
+
+        HBox rightSpacer = new HBox(helpButton);
+        HBox.setHgrow(rightSpacer, Priority.ALWAYS);
+        rightSpacer.setAlignment(Pos.CENTER_RIGHT);
+
+        HBox header = new HBox(leftSpacer, clockLabel, rightSpacer);
+        header.setAlignment(Pos.CENTER);
         header.setStyle(
             "-fx-background-color: #d6eaf8;"
             + "-fx-border-color: #97bbdb;"
             + "-fx-border-width: 0 0 1 0;"
             + "-fx-padding: 6 0;"
         );
-
         return header;
     }
 
