@@ -47,7 +47,7 @@ public class Command {
                 return "/IMG:/lilith/strawberry_cake.png\n\nHere is your cake!";
 
             case Config.CMD_NO:
-                return "Lilith is sad...\n";
+                return "/IMG:/lilith/lilith_nowords.png\n\nLilith is sad...";
 
             case Config.CMD_LIST:
                 return listTasks(taskList);
@@ -136,7 +136,7 @@ public class Command {
 
         } catch (SecurityException e) {
             return Config.ERROR_PREFIX + "Permission denied to open browser: " + e.getMessage();
-            
+
         } catch (Exception e) {
             return Config.ERROR_PREFIX + "An unexpected error occurred while trying to open the link.\n";
         }

@@ -34,6 +34,15 @@ public class Storage {
         return loadError;
     }
 
+    private final ArrayList<String> corruptedLines = new ArrayList<>();
+
+    /**
+     * Returns a list of any corrupted lines that were skipped during loadTasks().
+     */
+        public ArrayList<String> getCorruptedLines() {
+        return corruptedLines;
+    }
+
     /**
      * Creates file and directories if missing.
      *
@@ -70,7 +79,7 @@ public class Storage {
                 try {
                     tasks.add(Task.fromFileString(line));
                 } catch (Exception e) {
-                    System.out.println("Skipping corrupted line: " + line);
+                    corruptedLines.add("Skipped corrupted save data: " + line);
                 }
             }
 

@@ -25,6 +25,7 @@ import lilith.command.Command;
 import lilith.config.Config;
 import lilith.storage.Storage;
 import lilith.task.Task;
+import lilith.ui.HelpWindow;
 
 /**
  * Lilith GUI application.
@@ -38,6 +39,7 @@ public class Lilith extends Application {
     private VBox chatBox;
     private ScrollPane scrollPane;
     private TextField userInput;
+    private HelpWindow helpWindow;
     private Button sendButton;
     private Label clockLabel;
     private boolean lastMessageWasUser = true;
@@ -105,9 +107,15 @@ public class Lilith extends Application {
         stage.setMinHeight(300);
         stage.show();
 
+        helpWindow = new HelpWindow(getClass().getResourceAsStream("/lilith/icon.png"));
+
         // Show load error if any
         if (storage.getLoadError() != null) {
             addBotMessageOrError(storage.getLoadError(), true);
+        }
+
+        for (String warning : storage.getCorruptedLines()) {
+            addBotMessageOrError(warning, true);
         }
 
         addBotMessage("Hello, I'm Lilith!");
@@ -174,20 +182,10 @@ public class Lilith extends Application {
     }
 
     /**
-     * Shows help message as a bot message.
+     * Opens the help window.
      */
     private void showHelp() {
-        lastMessageWasUser = true;
-        addBotMessage(
-            "Here are my commands:\n"
-            + "todo <task>\n"
-            + "deadline <task> /by <date>\n"
-            + "event <task> /from <date> /to <date>\n"
-            + "update <index> [/name] [/by] [/from] [/to]\n"
-            + "mark / unmark / delete <index>\n"
-            + "find <keyword>\n"
-            + "list  |  /emptyall  |  cheer  |  bye"
-        );
+        helpWindow.show();
     }
 
     /**
@@ -203,7 +201,7 @@ public class Lilith extends Application {
 
         addUserMessage(input);
         String response = Command.handle(input, tasklist, storage);
-        
+
         boolean isError = response.startsWith(Config.ERROR_PREFIX);
         String display = isError
             ? response.substring(Config.ERROR_PREFIX.length())
