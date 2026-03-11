@@ -1,7 +1,11 @@
 package lilith;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -16,6 +20,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import lilith.command.Command;
 import lilith.config.Config;
 import lilith.storage.Storage;
@@ -34,6 +39,7 @@ public class Lilith extends Application {
     private ScrollPane scrollPane;
     private TextField userInput;
     private Button sendButton;
+    private Label clockLabel;
     private boolean lastMessageWasUser = true;
 
     /**
@@ -88,7 +94,7 @@ public class Lilith extends Application {
         inputRow.setAlignment(Pos.CENTER);
         inputRow.setStyle("-fx-background: #f0f5fa; -fx-background-color: #f0f5fa;");
 
-        VBox layout = new VBox(scrollPane, inputRow);
+        VBox layout = new VBox(createHeader(), scrollPane, inputRow);
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
         Scene scene = new Scene(layout, 600, 500);
 
@@ -99,6 +105,11 @@ public class Lilith extends Application {
         stage.setMinHeight(300);
         stage.show();
 
+        // Show load error if any
+        if (storage.getLoadError() != null) {
+            addBotMessageOrError(storage.getLoadError(), true);
+        }
+
         addBotMessage("Hello, I'm Lilith!");
         addBotMessage("Would you like a strawberry cake?");
 
@@ -108,8 +119,81 @@ public class Lilith extends Application {
     }
 
     /**
+     * Creates a header bar with current date, time and help button.
+     */
+    private HBox createHeader() {
+        clockLabel = new Label();
+        clockLabel.setStyle(
+            "-fx-text-fill: #1a1a2e;"
+            + "-fx-font-size: 12px;"
+            + "-fx-padding: 0 0 0 12;"
+        );
+        updateClock();
+
+        Timeline clock = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateClock()));
+        clock.setCycleCount(Timeline.INDEFINITE);
+        clock.play();
+
+        javafx.scene.image.Image helpImage = new javafx.scene.image.Image(
+            getClass().getResourceAsStream("/lilith/help.png")
+        );
+        javafx.scene.image.ImageView helpIcon = new javafx.scene.image.ImageView(helpImage);
+        helpIcon.setFitWidth(20);
+        helpIcon.setFitHeight(20);
+
+        Button helpButton = new Button();
+        helpButton.setGraphic(helpIcon);
+        helpButton.setStyle(
+            "-fx-background-color: transparent;"
+            + "-fx-cursor: hand;"
+            + "-fx-padding: 4 12 4 0;"
+        );
+        helpButton.setOnAction(e -> showHelp());
+
+        HBox header = new HBox(clockLabel);
+        HBox.setHgrow(clockLabel, Priority.ALWAYS);
+        header.getChildren().add(helpButton);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setStyle(
+            "-fx-background-color: #d6eaf8;"
+            + "-fx-border-color: #97bbdb;"
+            + "-fx-border-width: 0 0 1 0;"
+            + "-fx-padding: 6 0;"
+        );
+
+        return header;
+    }
+
+    /**
+     * Updates the clock label with the current date and time.
+     */
+    private void updateClock() {
+        String now = LocalDateTime.now()
+            .format(DateTimeFormatter.ofPattern("EEE, MMM dd yyyy  HH:mm:ss"));
+        clockLabel.setText(now);
+    }
+
+    /**
+     * Shows help message as a bot message.
+     */
+    private void showHelp() {
+        lastMessageWasUser = true;
+        addBotMessage(
+            "Here are my commands:\n"
+            + "todo <task>\n"
+            + "deadline <task> /by <date>\n"
+            + "event <task> /from <date> /to <date>\n"
+            + "update <index> [/name] [/by] [/from] [/to]\n"
+            + "mark / unmark / delete <index>\n"
+            + "find <keyword>\n"
+            + "list  |  /emptyall  |  cheer  |  bye"
+        );
+    }
+
+    /**
      * Handles user input from GUI.
      * Messages from Command.java are split by double newlines to allow multiple bot responses.
+     * ERROR_PREFIX is used to detect and style error messages.
      */
     private void handleUserInput() {
         String input = userInput.getText().trim();
@@ -119,10 +203,16 @@ public class Lilith extends Application {
 
         addUserMessage(input);
         String response = Command.handle(input, tasklist, storage);
-        String[] parts = response.split("\n\n");
+        
+        boolean isError = response.startsWith(Config.ERROR_PREFIX);
+        String display = isError
+            ? response.substring(Config.ERROR_PREFIX.length())
+            : response;
+
+        String[] parts = display.split("\n\n");
         for (String part : parts) {
             if (!part.isBlank()) {
-                addBotMessageOrError(part.trim(), isErrorResponse(part));
+                addBotMessageOrError(part.trim(), isError);
             }
         }
 
@@ -134,21 +224,7 @@ public class Lilith extends Application {
     }
 
     /**
-     * Checks if a bot response is an error message.
-     * Used to style errors differently.
-     */
-    private boolean isErrorResponse(String response) {
-        String lower = response.toLowerCase();
-        return lower.contains("cannot")
-            || lower.contains("does not exist")
-            || lower.contains("please provide")
-            || lower.contains("missing")
-            || lower.contains("use:")
-            || lower.contains("invalid");
-    }
-
-    /**
-     * Adds a user message bubble — right-aligned, purple tint.
+     * Adds a user message bubble — right-aligned, white.
      */
     private void addUserMessage(String text) {
         Label label = new Label(text);
@@ -168,7 +244,7 @@ public class Lilith extends Application {
     }
 
     /**
-     * Adds a bot message bubble — left-aligned, dark gray or red for errors.
+     * Adds a bot message bubble — left-aligned, no error styling.
      */
     private void addBotMessage(String text) {
         addBotMessageOrError(text, false);
@@ -178,7 +254,7 @@ public class Lilith extends Application {
      * Adds a bot message bubble with optional error styling.
      * Load and show circular profile picture and name header only if the last message was from the user.
      * Styles error messages with a red background and border.
-     * Normal messages have a dark gray background and light blue border.
+     * Normal messages have a dark blue background and light blue border.
      * Supports both text and image responses.
      * Image responses should start with "/IMG:" followed by the image path relative to resources.
      */
@@ -202,7 +278,7 @@ public class Lilith extends Application {
                 + "-fx-effect: dropshadow(three-pass-box, #2a4a6b, 1, 1, 0, 0);"
             );
 
-            HBox nameRow = new HBox(5, pfpView, nameLabel); // 5px gap between circle and name
+            HBox nameRow = new HBox(5, pfpView, nameLabel);
             nameRow.setAlignment(Pos.CENTER_LEFT);
             nameRow.setPadding(new Insets(0, 0, 0, 12));
             chatBox.getChildren().add(nameRow);

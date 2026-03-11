@@ -98,16 +98,16 @@ public class Command {
                 return handleUpdate(trimmedInput, taskList, storage);
             }
 
-            return "Lilith cannot understand the command...\n";
+            return Config.ERROR_PREFIX + "Lilith cannot understand the command...\n";
 
         } catch (IndexOutOfBoundsException e) {
-            return "That task does not exist!\n";
+            return Config.ERROR_PREFIX + "That task does not exist!\n";
 
         } catch (NumberFormatException e) {
-            return "Please provide a valid task number.\n";
+            return Config.ERROR_PREFIX + "Please provide a valid task number.\n";
 
         } catch (IllegalArgumentException e) {
-            return e.getMessage() + "\n";
+            return Config.ERROR_PREFIX + e.getMessage() + "\n";
         }
     }
 
@@ -117,11 +117,11 @@ public class Command {
     private static String openCheerLink() {
 
         if (!Config.CHEER_LINK.startsWith("https://www.youtube.com/")) {
-            return "Invalid URL. I cannot open it.\n";
+            return Config.ERROR_PREFIX + "Invalid URL. I cannot open it.\n";
         }
 
         if (!Desktop.isDesktopSupported()) {
-            return "Desktop API not supported on this system.\n";
+            return Config.ERROR_PREFIX + "Desktop API not supported on this system.\n";
         }
 
         try {
@@ -129,16 +129,17 @@ public class Command {
             return "Cheering operation GO!\n";
 
         } catch (URISyntaxException e) {
-            System.out.println("Invalid URI syntax: " + e.getMessage());
+            return Config.ERROR_PREFIX + "Invalid URI syntax: " + e.getMessage();
 
         } catch (IOException e) {
-            System.out.println("Failed to open browser: " + e.getMessage());
+            return Config.ERROR_PREFIX + "Failed to open browser: " + e.getMessage();
 
         } catch (SecurityException e) {
-            System.out.println("Permission denied to open browser: " + e.getMessage());
+            return Config.ERROR_PREFIX + "Permission denied to open browser: " + e.getMessage();
+            
+        } catch (Exception e) {
+            return Config.ERROR_PREFIX + "An unexpected error occurred while trying to open the link.\n";
         }
-
-        return "Failed to open cheer link.\n";
     }
 
     /**
@@ -183,7 +184,7 @@ public class Command {
         String keyword = trimmedInput.substring(Config.CMD_FIND.length()).trim();
 
         if (keyword.isEmpty()) {
-            return "Tell me which task you are looking for.\n";
+            return Config.ERROR_PREFIX + "Tell me which task you are looking for.\n";
         }
 
         String keywordLower = keyword.toLowerCase();
@@ -195,7 +196,7 @@ public class Command {
                 .toList();
 
         if (matches.isEmpty()) {
-            return "No matching tasks found for \"" + keyword + "\".\n";
+            return Config.ERROR_PREFIX + "No matching tasks found for \"" + keyword + "\".\n";
         }
 
         return IntStream.range(0, matches.size())
@@ -292,7 +293,7 @@ public class Command {
      * Handles updating an existing task's fields.
      */
     private static String handleUpdate(String trimmedInput, ArrayList<Task> taskList, Storage storage) {
-        // Split "update 2 /name foo /by 2025-01-01" → ["update", "2", "/name foo /by 2025-01-01"]
+
         String afterCmd = trimmedInput.substring(Config.CMD_UPDATE.length()).trim();
         String[] firstSplit = afterCmd.split("\\s+", 2);
 
@@ -303,7 +304,7 @@ public class Command {
         }
 
         int taskIndex = Integer.parseInt(firstSplit[0]) - 1;
-        Task task = taskList.get(taskIndex); // throws IndexOutOfBoundsException if bad index
+        Task task = taskList.get(taskIndex);
 
         String[] updates = Parser.parseUpdateInput(firstSplit[1]);
 
@@ -311,13 +312,13 @@ public class Command {
             task.setTaskName(updates[0]);
         }
         if (updates[1] != null) {
-            task.setEndDetail(updates[1]); // /by → enddetail for Deadline
+            task.setEndDetail(updates[1]);
         }
         if (updates[2] != null) {
-            task.setStartDetail(updates[2]); // /from → startdetail for Event
+            task.setStartDetail(updates[2]);
         }
         if (updates[3] != null) {
-            task.setEndDetail(updates[3]); // /to → enddetail for Event
+            task.setEndDetail(updates[3]);
         }
 
         storage.saveTasks(taskList);

@@ -10,15 +10,9 @@ import java.time.format.DateTimeParseException;
  */
 public class Parser {
 
-    /**
-     * Accepted output date format (what the user sees).
-     */
     public static final DateTimeFormatter OUTPUT_FORMAT =
             DateTimeFormatter.ofPattern("MMM dd yyyy HH:mm");
 
-    /**
-     * Accepted input date formats (what the user can input).
-     */
     private static final DateTimeFormatter[] FORMATS = new DateTimeFormatter[]{
         DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm"),
         DateTimeFormatter.ofPattern("yyyy/MM/dd HHmm"),
@@ -52,10 +46,10 @@ public class Parser {
      *
      * @param dateTimeStr Input string from user.
      * @return Parsed LocalDateTime object.
-     * @throws DateTimeParseException If input does not match any format.
+     * @throws IllegalArgumentException If input does not match any format.
      */
     public static LocalDateTime parseDateTime(String dateTimeStr)
-            throws DateTimeParseException {
+            throws IllegalArgumentException {
 
         String trimmed = dateTimeStr.trim();
 
@@ -67,16 +61,13 @@ public class Parser {
                     LocalDate date = LocalDate.parse(trimmed, formatter);
                     return date.atStartOfDay();
                 }
-
             } catch (DateTimeParseException e) {
                 // Try next formatter
             }
         }
 
-        throw new DateTimeParseException(
-                "I can't understand your date format.",
-                trimmed,
-                0
+        throw new IllegalArgumentException(
+                "I can't understand your date format: " + trimmed
         );
     }
 
@@ -108,9 +99,9 @@ public class Parser {
             );
         }
 
-        parseDateTime(parts[1].trim());
-
-        return new String[]{parts[0].trim(), parts[1].trim()};
+        String endTrimmed = parts[1].trim();
+        parseDateTime(endTrimmed);
+        return new String[]{parts[0].trim(), endTrimmed};
     }
 
     /**
@@ -159,20 +150,24 @@ public class Parser {
         LocalDateTime startDt = parseDateTime(start);
         LocalDateTime endDt = parseDateTime(end);
         if (!startDt.isBefore(endDt)) {
-            throw new IllegalArgumentException("Start date must be before end date.");
+            throw new IllegalArgumentException(
+                "Start date must be before end date."
+            );
         }
     }
 
     /**
      * Parses the update command input into a String array of field updates.
-     * Returns a 4-element array: [name, by, from, to]
+     * Returns a 4-element array: [name, by, from, to].
      * Any field not provided will be null.
-     * parseDateTime(val) validates the date — throws if invalid
      *
      * @param input User update command input after "update (index)" is removed.
      * @return String array of [name, by, from, to].
+     * @throws IllegalArgumentException If a date value is invalid.
      */
-    public static String[] parseUpdateInput(String input) {
+    public static String[] parseUpdateInput(String input)
+            throws IllegalArgumentException {
+
         String[] result = new String[4];
 
         if (input.contains("/name")) {

@@ -16,6 +16,7 @@ import lilith.task.Task;
 public class Storage {
 
     private final Path filePath;
+    private String loadError = null;
 
     /**
      * Constructs a Storage object with the given file path.
@@ -27,16 +28,21 @@ public class Storage {
     }
 
     /**
+     * Returns any error that occurred during loadTasks(), or null if none.
+     */
+    public String getLoadError() {
+        return loadError;
+    }
+
+    /**
      * Creates file and directories if missing.
      *
      * @throws IOException If file cannot be created.
      */
     private void ensureFileExists() throws IOException {
-
         if (!Files.exists(filePath.getParent())) {
             Files.createDirectories(filePath.getParent());
         }
-
         if (!Files.exists(filePath)) {
             Files.createFile(filePath);
         }
@@ -44,29 +50,25 @@ public class Storage {
 
     /**
      * Loads tasks from the file and skips corrupted lines safely.
+     * Stores any IO error in loadError for the GUI to display on startup.
      *
      * @return ArrayList of loaded tasks.
      */
     public ArrayList<Task> loadTasks() {
-
         ArrayList<Task> tasks = new ArrayList<>();
+        loadError = null;
 
         try {
             ensureFileExists();
 
-            List<String> lines =
-                    Files.readAllLines(filePath, StandardCharsets.UTF_8);
+            List<String> lines = Files.readAllLines(filePath, StandardCharsets.UTF_8);
 
             for (String line : lines) {
-
                 if (line.trim().isEmpty()) {
                     continue;
                 }
-
                 try {
-                    Task task = Task.fromFileString(line);
-                    tasks.add(task);
-
+                    tasks.add(Task.fromFileString(line));
                 } catch (Exception e) {
                     System.out.println("Skipping corrupted line: " + line);
                 }
@@ -74,9 +76,9 @@ public class Storage {
 
         } catch (IOException e) {
             if (e.getMessage() != null && e.getMessage().toLowerCase().contains("denied")) {
-                System.out.println("Permission denied: cannot read from " + filePath);
+                loadError = "Permission denied: cannot read save file.";
             } else {
-                System.out.println("Error loading tasks: " + e.getMessage());
+                loadError = "Could not load saved tasks: " + e.getMessage();
             }
         }
 
@@ -85,11 +87,12 @@ public class Storage {
 
     /**
      * Overwrites the file each time a task is added or removed.
+     * Throws IllegalArgumentException so Command.handle() can surface it in the GUI.
      *
      * @param tasks Current task list to save.
+     * @throws IllegalArgumentException If file cannot be written.
      */
     public void saveTasks(ArrayList<Task> tasks) {
-
         try {
             ensureFileExists();
 
@@ -101,11 +104,10 @@ public class Storage {
 
         } catch (IOException e) {
             if (e.getMessage() != null && e.getMessage().toLowerCase().contains("denied")) {
-                System.out.println("Permission denied: cannot write to " + filePath);
+                throw new IllegalArgumentException("Permission denied: cannot write to save file.");
             } else {
-                System.out.println("Error saving tasks: " + e.getMessage());
+                throw new IllegalArgumentException("Could not save tasks: " + e.getMessage());
             }
         }
     }
 }
-
