@@ -1,5 +1,0 @@
-T | 0 | Add C-Help
-T | 0 | Add D-Trivia
-this is corrupted line 1
-D | 0 | assignment | 23-3-2026
-this is corrupted line 2

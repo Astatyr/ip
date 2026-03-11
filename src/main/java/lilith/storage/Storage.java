@@ -17,6 +17,7 @@ public class Storage {
 
     private final Path filePath;
     private String loadError = null;
+    private final ArrayList<String> corruptedLines = new ArrayList<>();
 
     /**
      * Constructs a Storage object with the given file path.
@@ -34,12 +35,10 @@ public class Storage {
         return loadError;
     }
 
-    private final ArrayList<String> corruptedLines = new ArrayList<>();
-
     /**
      * Returns a list of any corrupted lines that were skipped during loadTasks().
      */
-        public ArrayList<String> getCorruptedLines() {
+    public ArrayList<String> getCorruptedLines() {
         return corruptedLines;
     }
 

@@ -1,6 +1,6 @@
 # Lilith
 
-Lilith is a personal task management chatbot with a themed GUI, inspired by the character Lilith. She helps you manage todos, deadlines, and events — with a personality to match.
+Lilith is a personal task management chatbot with a themed GUI. She helps you manage todos, deadlines, and events.
 
 ![Ui](Ui.png)
 
@@ -43,11 +43,11 @@ Lilith supports three types of tasks:
 | `find <keyword>` | Search tasks by name | `find book` |
 | `mark <index>` | Mark a task as done | `mark 1` |
 | `unmark <index>` | Mark a task as not done | `unmark 1` |
-| `update <index> [fields]` | Edit an existing task | `update 1 /name new name` |
+| `update <index> [/name] [/by] [/from] [/to]` | Edit an existing task | `update 1 /name new name` |
 | `delete <index>` | Delete a task | `delete 1` |
 | `/emptyall` | Clear all tasks | `/emptyall` |
 | `bye` | Exit the app | `bye` |
-| `cheer` | You look like you need it | `cheer` |
+| `cheer` | Sends an encouraging message or a surprise! | `cheer` |
 
 ### Update Command Fields
 The `update` command accepts any combination of these fields:
@@ -118,7 +118,7 @@ The JAR then can be found in `build/libs/Lilith.jar`.
 ## Acknowledgments & Credits
 
 ### Character & Aesthetic
-* **Source Material:** The character **Lilith**, her name, and the high-contrast visual theme are inspired by the game *The NOexistenceN of you AND me*.
+* **Source Material:** The character **Lilith**, her name, and the visual theme are inspired by the game *The NOexistenceN of you AND me*.
 * **Visual Assets:** The bot's profile picture (`pfp.png`) and thematic icons (like the strawberry cake) are from or adapted from the original game assets for educational and non-commercial use.
 
 ### Technical Credits
